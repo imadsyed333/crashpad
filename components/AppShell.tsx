@@ -6,6 +6,20 @@ import { useThemeStore } from "@/store/themeStore";
 import { useVehicleStore } from "@/store/vehicleStore";
 import { useEffect, useState } from "react";
 
+const SPLASH_MS = 2000;
+
+function SplashMark() {
+  return (
+    <img
+      className="splash-logo"
+      src="/icons/icon-192.png"
+      alt=""
+      width={192}
+      height={192}
+    />
+  );
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const theme = useThemeStore((s) => s.theme);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
@@ -17,13 +31,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
     (async () => {
+      const started = Date.now();
       try {
         await initializeSecureStorage();
         await useCollisionStore.persist.rehydrate();
         await useThemeStore.persist.rehydrate();
         await useVehicleStore.persist.rehydrate();
         const persisted = await isStorageDurable();
+        const remaining = Math.max(0, SPLASH_MS - (Date.now() - started));
+        if (remaining) {
+          await new Promise<void>((resolve) => {
+            timer = setTimeout(resolve, remaining);
+          });
+        }
         if (!cancelled) {
           setDurable(persisted);
           setStatus("ready");
@@ -35,14 +57,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     })();
     return () => {
       cancelled = true;
+      if (timer) clearTimeout(timer);
     };
   }, []);
 
   if (status === "loading") {
     return (
       <div className="splash">
+        <SplashMark />
         <h1>CrashPad</h1>
-        <p className="muted">Unlocking on-device storage…</p>
+        <p className="muted">On this device. Just yours.</p>
       </div>
     );
   }
@@ -50,6 +74,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (status === "error") {
     return (
       <div className="splash">
+        <SplashMark />
         <h1>Couldn’t open storage</h1>
         <p className="muted">
           CrashPad could not unlock encrypted storage in this browser. You can wipe local

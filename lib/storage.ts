@@ -198,11 +198,28 @@ export async function deleteAllCrashPadData(): Promise<void> {
   }
 }
 
+function isInstalledPwa(): boolean {
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    Boolean((navigator as { standalone?: boolean }).standalone)
+  );
+}
+
 export async function isStorageDurable(): Promise<boolean> {
-  if (!navigator.storage?.estimate && !navigator.storage?.persisted) return true;
-  try {
-    if (navigator.storage.persisted) return await navigator.storage.persisted();
+  // Installed PWAs keep site data even when persisted() is still false
+  // (Safari/iOS never grants it; Chrome often waits until persist() is called).
+  if (isInstalledPwa()) {
+    try {
+      await navigator.storage?.persist?.();
+    } catch {
+      /* persist is best-effort */
+    }
     return true;
+  }
+  if (!navigator.storage?.persisted && !navigator.storage?.persist) return true;
+  try {
+    if (await navigator.storage.persisted?.()) return true;
+    return (await navigator.storage.persist?.()) ?? true;
   } catch {
     return false;
   }
