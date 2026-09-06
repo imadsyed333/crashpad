@@ -4,6 +4,7 @@ import { PHONE_MASK } from "@/lib/mask";
 import { personSchema } from "@/lib/schemas";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
 import { useWitnessFormStore } from "@/store/witnessFormStore";
+import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import z from "zod";
 import { Dialog } from "./Dialog";
@@ -38,7 +39,7 @@ export function WitnessCard({
                 setDialogVisible(true);
               }}
             >
-              ✎
+              <Pencil />
             </button>
             {onDelete && (
               <button
@@ -47,7 +48,7 @@ export function WitnessCard({
                 aria-label="Delete witness"
                 onClick={onDelete}
               >
-                ⌫
+                <Trash2 />
               </button>
             )}
           </div>

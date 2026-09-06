@@ -4,6 +4,7 @@ import { CollisionDraftButton } from "@/components/CollisionDraftButton";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { VehicleList } from "@/components/VehicleList";
 import { useVehicleFormStore } from "@/store/vehicleFormStore";
+import { Plus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
@@ -50,7 +51,7 @@ function VehiclesForm() {
           router.push("/collisions/form/vehicle");
         }}
       >
-        +
+        <Plus />
       </button>
     </ScreenContainer>
   );

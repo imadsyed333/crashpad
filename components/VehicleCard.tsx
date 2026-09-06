@@ -2,6 +2,7 @@
 
 import { DraftVehicle, Vehicle } from "@/lib/types";
 import { useVehicleFormStore } from "@/store/vehicleFormStore";
+import { Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 function isDraft(vehicle: Vehicle | DraftVehicle): vehicle is DraftVehicle {
@@ -42,7 +43,7 @@ export function VehicleCard({
                   router.push(editHref);
                 }}
               >
-                ✎
+                <Pencil />
               </button>
               {onDelete && (
                 <button
@@ -51,7 +52,7 @@ export function VehicleCard({
                   aria-label="Delete vehicle"
                   onClick={onDelete}
                 >
-                  ⌫
+                  <Trash2 />
                 </button>
               )}
             </>

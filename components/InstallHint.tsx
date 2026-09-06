@@ -1,5 +1,6 @@
 "use client";
 
+import { X } from "lucide-react";
 import { useEffect, useState, useSyncExternalStore } from "react";
 
 type BeforeInstallPrompt = Event & { prompt: () => Promise<void> };
@@ -65,7 +66,7 @@ export function InstallHint() {
         </button>
       )}
       <button type="button" className="icon-btn" onClick={dismiss} aria-label="Dismiss install hint">
-        ×
+        <X />
       </button>
     </div>
   );

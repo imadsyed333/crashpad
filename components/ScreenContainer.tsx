@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -30,7 +31,7 @@ export function ScreenContainer({
       <header className="header">
         {backButton && (
           <button type="button" className="icon-btn" onClick={handleBack} aria-label="Go back">
-            ←
+            <ArrowLeft />
           </button>
         )}
         <div className="header-text">
@@ -39,8 +40,8 @@ export function ScreenContainer({
         </div>
         <ThemeToggle />
       </header>
-      <div className="grow">{children}</div>
-      {footer}
+      <div className="shell-body">{children}</div>
+      {footer ? <footer className="shell-footer">{footer}</footer> : null}
     </div>
   );
 }

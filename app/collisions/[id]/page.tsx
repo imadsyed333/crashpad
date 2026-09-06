@@ -5,6 +5,7 @@ import { ScreenContainer } from "@/components/ScreenContainer";
 import { downloadReport, openPrintReport, shareReport } from "@/lib/pdf";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
 import { useCollisionStore } from "@/store/collisionStore";
+import { Download, Pencil, Printer, Share2 } from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 
 export default function CollisionViewPage() {
@@ -18,51 +19,65 @@ export default function CollisionViewPage() {
 
   if (!collision) {
     return (
-      <ScreenContainer title="Collision Not Found">
+      <ScreenContainer
+        title="Collision Not Found"
+        footer={
+          <div className="btn-row">
+            <button type="button" className="btn btn-primary" onClick={() => router.push("/")}>
+              Go Back
+            </button>
+          </div>
+        }
+      >
         <div className="card empty">
           <h3>Collision not found</h3>
           <p>This collision could not be found. It may have been deleted.</p>
           <p className="hint">Tap the button below to return to your collisions list</p>
-        </div>
-        <div className="btn-row">
-          <button type="button" className="btn btn-primary" onClick={() => router.push("/")}>
-            Go Back
-          </button>
         </div>
       </ScreenContainer>
     );
   }
 
   return (
-    <ScreenContainer title="View Collision">
+    <ScreenContainer
+      title="View Collision"
+      footer={
+        <>
+          <div className="btn-row">
+            <button type="button" className="btn btn-outline" onClick={() => downloadReport(collision)}>
+              <Download />
+              Download
+            </button>
+            <button type="button" className="btn btn-outline" onClick={() => openPrintReport(collision)}>
+              <Printer />
+              Print
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => {
+                setForm(collision);
+                setEdit(true);
+                router.push("/collisions/form/review");
+              }}
+            >
+              <Pencil />
+              Edit
+            </button>
+          </div>
+          <button
+            type="button"
+            className="btn btn-outline"
+            style={{ width: "100%", marginTop: "0.5rem" }}
+            onClick={() => void shareReport(collision)}
+          >
+            <Share2 />
+            Share
+          </button>
+        </>
+      }
+    >
       <CollisionInfoView collision={collision} />
-      <div className="btn-row">
-        <button type="button" className="btn btn-outline" onClick={() => downloadReport(collision)}>
-          Download
-        </button>
-        <button type="button" className="btn btn-outline" onClick={() => openPrintReport(collision)}>
-          Print
-        </button>
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={() => {
-            setForm(collision);
-            setEdit(true);
-            router.push("/collisions/form/review");
-          }}
-        >
-          Edit
-        </button>
-      </div>
-      <button
-        type="button"
-        className="btn btn-outline"
-        style={{ width: "100%", marginTop: "0.5rem" }}
-        onClick={() => void shareReport(collision)}
-      >
-        Share
-      </button>
     </ScreenContainer>
   );
 }

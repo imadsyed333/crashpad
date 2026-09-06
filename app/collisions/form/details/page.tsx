@@ -6,6 +6,7 @@ import { Field, TextAreaField } from "@/components/Field";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { detailsSchema } from "@/lib/schemas";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
+import { MapPin } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import z from "zod";
@@ -104,7 +105,7 @@ function DetailsForm() {
           aria-label={fetching ? "Fetching current location" : "Use current location"}
           disabled={fetching}
         >
-          {fetching ? "…" : "📍"}
+          <MapPin />
         </button>
       </div>
       {location.coordinates && (

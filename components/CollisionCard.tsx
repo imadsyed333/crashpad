@@ -2,6 +2,7 @@
 
 import { Collision, DraftCollision } from "@/lib/types";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
+import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 function isDraft(collision: Collision | DraftCollision): collision is DraftCollision {
@@ -63,7 +64,7 @@ export function CollisionCard({
                 onDelete();
               }}
             >
-              ⌫
+              <Trash2 />
             </button>
           )}
         </div>

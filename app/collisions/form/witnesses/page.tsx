@@ -4,6 +4,7 @@ import { CollisionDraftButton } from "@/components/CollisionDraftButton";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { WitnessDialog, WitnessList } from "@/components/WitnessDialog";
 import { useWitnessFormStore } from "@/store/witnessFormStore";
+import { Plus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
@@ -51,7 +52,7 @@ function WitnessesForm() {
           setDialogVisible(true);
         }}
       >
-        +
+        <Plus />
       </button>
     </ScreenContainer>
   );

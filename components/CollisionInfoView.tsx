@@ -1,6 +1,7 @@
 "use client";
 
 import { Collision } from "@/lib/types";
+import { Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { MediaGrid } from "./Media";
 import { VehicleCard } from "./VehicleCard";
@@ -27,7 +28,7 @@ export function CollisionInfoView({
             aria-label="Edit details"
             onClick={() => router.push("/collisions/form/details?mode=edit")}
           >
-            ✎
+            <Pencil />
           </button>
         )}
       </div>
@@ -57,7 +58,7 @@ export function CollisionInfoView({
             aria-label="Edit media"
             onClick={() => router.push("/collisions/form/media?mode=edit")}
           >
-            ✎
+            <Pencil />
           </button>
         )}
       </div>
@@ -77,7 +78,7 @@ export function CollisionInfoView({
             aria-label="Edit vehicles"
             onClick={() => router.push("/collisions/form/vehicles?mode=edit")}
           >
-            ✎
+            <Pencil />
           </button>
         )}
       </div>
@@ -98,7 +99,7 @@ export function CollisionInfoView({
             aria-label="Edit witnesses"
             onClick={() => router.push("/collisions/form/witnesses?mode=edit")}
           >
-            ✎
+            <Pencil />
           </button>
         )}
       </div>

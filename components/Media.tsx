@@ -7,6 +7,7 @@ import { createMediaFromFile } from "@/lib/media";
 import { getMediaBlob } from "@/lib/storage";
 import { Media } from "@/lib/types";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
+import { Camera, Images, Play, Trash2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 function useObjectUrl(id?: string) {
@@ -37,7 +38,7 @@ function MediaThumb({ media, onOpen }: { media: Media; onOpen: () => void }) {
         <img className="media-thumb" src={url} alt="" />
       ) : (
         <div className="media-thumb" aria-hidden>
-          {media.type === "video" ? "▶" : ""}
+          {media.type === "video" ? <Play /> : ""}
         </div>
       )}
     </button>
@@ -49,7 +50,7 @@ function MediaViewer({ media, onClose }: { media: Media; onClose: () => void }) 
   return (
     <div className="viewer">
       <button type="button" className="icon-btn" style={{ color: "white" }} onClick={onClose} aria-label="Close">
-        ×
+        <X />
       </button>
       {url && media.type === "video" ? (
         <video src={url} controls playsInline />
@@ -122,6 +123,7 @@ export function MediaOptions() {
           aria-label="Open camera"
           onClick={() => cameraRef.current?.click()}
         >
+          <Camera />
           Camera
         </button>
         <button
@@ -131,6 +133,7 @@ export function MediaOptions() {
           aria-label="Open media library"
           onClick={() => libraryRef.current?.click()}
         >
+          <Images />
           Library
         </button>
       </div>
@@ -167,7 +170,7 @@ export function MediaGrid({ media, showActions = false }: { media: Media[]; show
                 style={{ position: "absolute", top: 4, right: 4, background: "var(--surface)" }}
                 onClick={() => deleteMedia(item.id)}
               >
-                ⌫
+                <Trash2 />
               </button>
             )}
           </div>
