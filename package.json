@@ -3,23 +3,34 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "concurrently -p none \"serwist build serwist.config.mjs --watch\" \"next dev\"",
+    "dev:once": "serwist build serwist.config.mjs && next dev",
+    "build": "next build && serwist build serwist.config.mjs && npm run check:storage",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check:storage": "node scripts/storage-check.mjs"
   },
   "dependencies": {
     "next": "16.3.4",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "validator": "^13.15.35",
+    "zod": "^4.5.4",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@serwist/cli": "^9.5.12",
+    "@serwist/next": "^9.5.12",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/validator": "^13.15.10",
+    "concurrently": "^10.0.5",
+    "esbuild": "^0.28.2",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
+    "serwist": "^9.5.12",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

@@ -1,0 +1,41 @@
+import validator from "validator";
+import z from "zod";
+
+export const locationSchema = z.object({
+  description: z.string().min(1, { error: "Don't leave this empty!" }),
+  coordinates: z
+    .object({
+      latitude: z.number(),
+      longitude: z.number(),
+    })
+    .nullable(),
+});
+
+export const detailsSchema = z.object({
+  location: locationSchema,
+  description: z.string().min(1, { error: "Don't leave this empty!" }),
+});
+
+export const vehicleSchema = z.object({
+  make: z.string().min(1, { error: "Make must not be empty" }),
+  model: z.string().min(1, { error: "Model must not be empty" }),
+  color: z.string().min(1, { error: "Color must not be empty" }),
+  licensePlate: z.string().min(1, { error: "License plate must not be empty" }),
+  insuranceCompany: z
+    .string()
+    .min(1, { error: "Insurance company must not be empty" }),
+  policyNumber: z.string().min(1, "Policy number must not be empty"),
+});
+
+export const personSchema = z.object({
+  name: z.string().min(1, { error: "Name must not be empty" }),
+  address: z.string().min(1, { error: "Address must not be empty" }),
+  phoneNumber: z
+    .string()
+    .min(1, { error: "Phone number must not be empty" })
+    .refine(validator.isMobilePhone, { error: "Not a valid phone number" }),
+});
+
+export const driverSchema = personSchema.extend({
+  license: z.string().min(1, { error: "Driver license must not be empty" }),
+});

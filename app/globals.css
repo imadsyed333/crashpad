@@ -1,1 +1,477 @@
 @import "tailwindcss";
+
+:root {
+  --primary: rgb(25, 110, 200);
+  --onPrimary: rgb(255, 255, 255);
+  --primaryContainer: rgb(210, 230, 255);
+  --onPrimaryContainer: rgb(0, 32, 70);
+  --secondary: rgb(70, 100, 190);
+  --onSecondary: rgb(255, 255, 255);
+  --secondaryContainer: rgb(220, 228, 255);
+  --onSecondaryContainer: rgb(10, 20, 90);
+  --error: rgb(186, 26, 26);
+  --onError: rgb(255, 255, 255);
+  --errorContainer: rgb(255, 218, 214);
+  --onErrorContainer: rgb(65, 0, 2);
+  --warning: rgb(180, 100, 0);
+  --onWarning: rgb(255, 255, 255);
+  --warningContainer: rgb(255, 238, 210);
+  --onWarningContainer: rgb(60, 30, 0);
+  --background: rgb(248, 250, 255);
+  --onBackground: rgb(20, 24, 30);
+  --surface: rgb(248, 250, 255);
+  --onSurface: rgb(20, 24, 30);
+  --surfaceVariant: rgb(220, 226, 240);
+  --onSurfaceVariant: rgb(65, 72, 85);
+  --outline: rgb(110, 120, 135);
+  --outlineVariant: rgb(190, 198, 210);
+  --elevation1: rgb(240, 244, 255);
+  --elevation2: rgb(232, 238, 252);
+  --backdrop: rgba(40, 50, 70, 0.4);
+  --fab-size: 56px;
+}
+
+html[data-theme="dark"] {
+  --primary: rgb(150, 200, 255);
+  --onPrimary: rgb(0, 45, 90);
+  --primaryContainer: rgb(0, 75, 140);
+  --onPrimaryContainer: rgb(210, 230, 255);
+  --secondary: rgb(180, 200, 255);
+  --onSecondary: rgb(30, 40, 110);
+  --secondaryContainer: rgb(55, 70, 150);
+  --onSecondaryContainer: rgb(220, 228, 255);
+  --error: rgb(255, 180, 171);
+  --onError: rgb(105, 0, 5);
+  --errorContainer: rgb(147, 0, 10);
+  --onErrorContainer: rgb(255, 180, 171);
+  --warning: rgb(255, 200, 100);
+  --onWarning: rgb(70, 40, 0);
+  --warningContainer: rgb(140, 85, 0);
+  --onWarningContainer: rgb(255, 230, 180);
+  --background: rgb(18, 22, 28);
+  --onBackground: rgb(225, 230, 240);
+  --surface: rgb(18, 22, 28);
+  --onSurface: rgb(225, 230, 240);
+  --surfaceVariant: rgb(60, 70, 85);
+  --onSurfaceVariant: rgb(190, 200, 215);
+  --outline: rgb(135, 145, 160);
+  --outlineVariant: rgb(60, 70, 85);
+  --elevation1: rgb(28, 34, 42);
+  --elevation2: rgb(32, 39, 48);
+  --backdrop: rgba(30, 40, 60, 0.4);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--background);
+  color: var(--onBackground);
+}
+
+#app-root {
+  min-height: 100dvh;
+  background: var(--background);
+}
+
+.shell {
+  width: min(40rem, 100%);
+  margin: 0 auto;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 1rem 1.25rem;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.header .desc {
+  margin: 0.25rem 0 0;
+  color: var(--onSurfaceVariant);
+  font-size: 0.95rem;
+}
+
+.icon-btn {
+  border: 0;
+  background: transparent;
+  color: var(--onSurface);
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  background: var(--elevation1);
+}
+
+.icon-btn.danger {
+  color: var(--error);
+}
+
+.btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.7rem 1.1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--onPrimary);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn-row {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.btn-row .btn {
+  flex: 1;
+}
+
+.btn-row .btn-primary {
+  flex: 2;
+}
+
+.card {
+  background: var(--elevation1);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.empty {
+  text-align: center;
+  padding: 1.5rem 1rem;
+}
+
+.empty h2,
+.empty h3 {
+  margin: 0.75rem 0 0.4rem;
+  font-size: 1.15rem;
+}
+
+.empty p {
+  margin: 0.25rem 0;
+  color: var(--onSurfaceVariant);
+}
+
+.empty .hint {
+  font-style: italic;
+  opacity: 0.8;
+  font-size: 0.85rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.6rem;
+}
+
+.field label {
+  font-size: 0.8rem;
+  color: var(--onSurfaceVariant);
+}
+
+.field input,
+.field textarea {
+  border: 0;
+  border-bottom: 2px solid var(--outlineVariant);
+  background: transparent;
+  color: var(--onSurface);
+  padding: 0.55rem 0.25rem;
+  font: inherit;
+  width: 100%;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-bottom-color: var(--primary);
+}
+
+.field.error input,
+.field.error textarea {
+  border-bottom-color: var(--error);
+}
+
+.errors {
+  color: var(--error);
+  font-size: 0.8rem;
+  margin: 0.15rem 0 0;
+}
+
+.fab {
+  position: fixed;
+  z-index: 10;
+  right: max(1rem, calc(50vw - 19rem));
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  width: var(--fab-size);
+  height: var(--fab-size);
+  padding: 0;
+  border-radius: 999px;
+  border: 0;
+  background: var(--primary);
+  color: var(--onPrimary);
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.section-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.7;
+  margin: 0 0 0.5rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+.pill {
+  background: var(--secondaryContainer);
+  color: var(--onSecondaryContainer);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.8rem;
+}
+
+.badge {
+  background: var(--warningContainer);
+  color: var(--onWarningContainer);
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.muted {
+  color: var(--onSurfaceVariant);
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--backdrop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 20;
+}
+
+.dialog {
+  background: var(--surface);
+  color: var(--onSurface);
+  border-radius: 16px;
+  padding: 1.1rem;
+  width: min(28rem, 100%);
+  max-height: 90dvh;
+  overflow: auto;
+}
+
+.dialog h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1.2rem;
+}
+
+.step {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.1rem;
+}
+
+.step-num {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: var(--primaryContainer);
+  color: var(--onPrimaryContainer);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.emergency {
+  background: var(--errorContainer);
+  color: var(--onErrorContainer);
+}
+
+.emergency h2 {
+  color: var(--error);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 1rem;
+}
+
+.media-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.media-thumb {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 10px;
+  background: var(--surfaceVariant);
+}
+
+.grow {
+  flex: 1;
+}
+
+.divider {
+  height: 1px;
+  background: var(--outlineVariant);
+  margin: 1rem 0;
+}
+
+.install-banner {
+  background: var(--primaryContainer);
+  color: var(--onPrimaryContainer);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.install-banner p {
+  margin: 0;
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.splash {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  margin-left: auto;
+}
+
+.location-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.location-row .field {
+  flex: 1;
+}
+
+.viewer {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+}
+
+.viewer img,
+.viewer video {
+  max-width: 100%;
+  max-height: calc(100dvh - 4rem);
+  margin: auto;
+  object-fit: contain;
+}
+
+.privacy {
+  color: var(--onSurface);
+  line-height: 1.5;
+}
+
+.privacy h2 {
+  font-size: 1.1rem;
+  margin: 1.25rem 0 0.4rem;
+}
+
+.privacy p,
+.privacy li {
+  color: var(--onSurfaceVariant);
+}

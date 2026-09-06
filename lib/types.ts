@@ -1,0 +1,68 @@
+export interface Collision {
+  id: string;
+  date: Date;
+  location: Location;
+  description: string;
+  vehicles: Vehicle[];
+  media: Media[];
+  witnesses: Witness[];
+  officer: Officer | null;
+}
+
+export interface DraftCollision extends Collision {
+  savePoint: string;
+}
+
+export interface Vehicle {
+  id: string;
+  make: string;
+  model: string;
+  color: string;
+  licensePlate: string;
+  insuranceCompany: string;
+  policyNumber: string;
+  driver: Driver | null;
+}
+
+export interface DraftVehicle extends Vehicle {
+  savePoint: string;
+}
+
+export interface Person {
+  name: string;
+  address: string;
+  phoneNumber: string;
+}
+
+export interface Driver extends Person {
+  license: string;
+}
+
+export interface Witness extends Person {
+  id: string;
+}
+
+export type MediaType = "image" | "video";
+
+export interface Media {
+  id: string;
+  uri: string;
+  type: MediaType;
+  /** Still frame for videos; cards use this like an image uri */
+  thumbnailUri?: string;
+}
+
+export interface Officer {
+  name: string;
+  badgeNumber: string;
+}
+
+export interface Location {
+  description: string;
+  coordinates: Coordinates | null;
+}
+
+export interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
