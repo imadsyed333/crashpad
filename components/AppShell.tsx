@@ -66,7 +66,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="splash">
         <SplashMark />
         <h1>CrashPad</h1>
-        <p className="muted">On this device. Just yours.</p>
       </div>
     );
   }
