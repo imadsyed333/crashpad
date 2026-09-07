@@ -50,6 +50,7 @@ export interface Media {
   type: MediaType;
   /** Still frame for videos; cards use this like an image uri */
   thumbnailUri?: string;
+  mimeType?: string;
 }
 
 export interface Officer {

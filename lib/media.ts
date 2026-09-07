@@ -1,63 +1,41 @@
-import { MAX_MEDIA_BYTES, putMediaBlob } from "./storage";
+import { putMediaBlob } from "./storage";
+import {
+  assertAcceptableFile,
+  mimeTypeForFile,
+  resolveMediaType,
+} from "./mediaType";
 import type { MediaType } from "./types";
 
 export type MediaPayload = {
   uri: string;
   type: MediaType;
   thumbnailUri?: string;
+  mimeType?: string;
 };
 
-const VIDEO_EXTENSIONS = new Set([
-  "mp4",
-  "mov",
-  "m4v",
-  "avi",
-  "mkv",
-  "webm",
-  "3gp",
-  "3g2",
-]);
+export {
+  assertAcceptableFile,
+  fallbackMimeType,
+  getMediaType,
+  mimeTypeForFile,
+  resolveMediaType,
+} from "./mediaType";
 
-export function getMediaType(media: { type?: MediaType } | null | undefined): MediaType {
-  return media?.type === "video" ? "video" : "image";
-}
-
-function extensionFromPath(path: string | null | undefined): string | null {
-  if (!path) return null;
-  const withoutQuery = path.split("?")[0] ?? path;
-  const match = withoutQuery.match(/\.([a-z0-9]+)$/i);
-  return match?.[1]?.toLowerCase() ?? null;
-}
-
-export function resolveMediaType(file: File): MediaType {
-  if (file.type.startsWith("video/")) return "video";
-  if (file.type.startsWith("image/")) return "image";
-  const ext = extensionFromPath(file.name);
-  if (ext && VIDEO_EXTENSIONS.has(ext)) return "video";
-  return "image";
-}
-
-export function assertAcceptableFile(file: File): void {
-  if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
-    throw new Error("Only photos and videos can be attached.");
-  }
-  if (file.size > MAX_MEDIA_BYTES) {
-    throw new Error("File is too large (50 MB limit).");
-  }
-}
-
-async function grabVideoThumbnail(file: File): Promise<ArrayBuffer | null> {
-  const url = URL.createObjectURL(file);
+async function grabVideoThumbnail(file: File, mimeType: string): Promise<ArrayBuffer | null> {
+  const source = file.type.startsWith("video/") ? file : new Blob([file], { type: mimeType });
+  const url = URL.createObjectURL(source);
   try {
     const video = document.createElement("video");
     video.muted = true;
     video.playsInline = true;
+    video.preload = "auto";
     video.src = url;
     await new Promise<void>((resolve, reject) => {
       video.onloadeddata = () => resolve();
       video.onerror = () => reject(new Error("Could not read video"));
     });
-    video.currentTime = 0;
+    const duration = Number.isFinite(video.duration) ? video.duration : 0;
+    video.currentTime = duration > 0.1 ? 0.1 : 0;
     await new Promise<void>((resolve) => {
       video.onseeked = () => resolve();
       setTimeout(resolve, 400);
@@ -83,16 +61,17 @@ async function grabVideoThumbnail(file: File): Promise<ArrayBuffer | null> {
 export async function createMediaFromFile(file: File): Promise<MediaPayload> {
   assertAcceptableFile(file);
   const type = resolveMediaType(file);
+  const mimeType = mimeTypeForFile(file);
   const id = crypto.randomUUID();
   await putMediaBlob(id, await file.arrayBuffer());
 
   if (type === "image") {
-    return { uri: id, type };
+    return { uri: id, type, mimeType };
   }
 
-  const thumb = await grabVideoThumbnail(file);
-  if (!thumb) return { uri: id, type };
+  const thumb = await grabVideoThumbnail(file, mimeType);
+  if (!thumb) return { uri: id, type, mimeType };
   const thumbId = crypto.randomUUID();
   await putMediaBlob(thumbId, thumb);
-  return { uri: id, type, thumbnailUri: thumbId };
+  return { uri: id, type, mimeType, thumbnailUri: thumbId };
 }

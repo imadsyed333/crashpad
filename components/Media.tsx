@@ -3,14 +3,14 @@
 /* blob: URLs from encrypted IDB — next/image cannot optimize these */
 /* eslint-disable @next/next/no-img-element */
 
-import { createMediaFromFile } from "@/lib/media";
+import { createMediaFromFile, fallbackMimeType } from "@/lib/media";
 import { getMediaBlob } from "@/lib/storage";
 import { Media } from "@/lib/types";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
 import { Camera, Images, Play, Trash2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-function useObjectUrl(id?: string) {
+function useObjectUrl(id?: string, mimeType?: string) {
   const [url, setUrl] = useState<string | null>(null);
   useEffect(() => {
     if (!id) return;
@@ -18,23 +18,28 @@ function useObjectUrl(id?: string) {
     let objectUrl: string | null = null;
     getMediaBlob(id).then((buffer) => {
       if (!buffer || revoked) return;
-      objectUrl = URL.createObjectURL(new Blob([buffer]));
+      objectUrl = URL.createObjectURL(new Blob([buffer], mimeType ? { type: mimeType } : {}));
       setUrl(objectUrl);
     });
     return () => {
       revoked = true;
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, [id]);
+  }, [id, mimeType]);
   return url;
 }
 
 function MediaThumb({ media, onOpen }: { media: Media; onOpen: () => void }) {
-  const previewId = media.type === "video" ? media.thumbnailUri : media.uri;
-  const url = useObjectUrl(previewId);
+  const hasThumb = Boolean(media.thumbnailUri);
+  const previewId = hasThumb ? media.thumbnailUri : media.uri;
+  const previewMime = hasThumb ? "image/jpeg" : fallbackMimeType(media);
+  const url = useObjectUrl(previewId, previewMime);
+  const showVideo = media.type === "video" && !hasThumb;
   return (
     <button type="button" onClick={onOpen} style={{ padding: 0, border: 0, background: "transparent" }}>
-      {url ? (
+      {url && showVideo ? (
+        <video className="media-thumb" src={url} muted playsInline preload="metadata" />
+      ) : url ? (
         <img className="media-thumb" src={url} alt="" />
       ) : (
         <div className="media-thumb" aria-hidden>
@@ -46,7 +51,7 @@ function MediaThumb({ media, onOpen }: { media: Media; onOpen: () => void }) {
 }
 
 function MediaViewer({ media, onClose }: { media: Media; onClose: () => void }) {
-  const url = useObjectUrl(media.uri);
+  const url = useObjectUrl(media.uri, fallbackMimeType(media));
   return (
     <div className="viewer">
       <button type="button" className="icon-btn" style={{ color: "white" }} onClick={onClose} aria-label="Close">

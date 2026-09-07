@@ -9,6 +9,9 @@ import {
   unwrapDataKey,
   wrapDataKey,
 } from "./crypto";
+import { MAX_MEDIA_BYTES } from "./mediaType";
+
+export { MAX_MEDIA_BYTES };
 
 export const DB_NAME = "crashpad-storage";
 const DB_VERSION = 1;
@@ -141,8 +144,6 @@ export const persistReviver = (key: string, value: unknown) => {
   if (key === "date" && typeof value === "string") return new Date(value);
   return value;
 };
-
-export const MAX_MEDIA_BYTES = 50 * 1024 * 1024;
 
 export async function putMediaBlob(id: string, data: ArrayBuffer): Promise<void> {
   if (data.byteLength > MAX_MEDIA_BYTES) {
