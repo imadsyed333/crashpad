@@ -1,34 +1,28 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CrashPad
 
-## Getting Started
+Document a collision on this device. No account. No server.
 
-First, run the development server:
+CrashPad is an installable web app you can use at the scene: safety checklist, what happened, photos, the other vehicles, witnesses. After the first visit it works offline. Reports and media stay in the browser, encrypted, and never get sent anywhere unless you export them yourself.
+
+Save your own car once so new reports start with that filled in. You can leave a draft and finish later. When you're done, download, print, or share a PDF.
+
+## Privacy
+
+Everything lives in this origin's IndexedDB (AES-GCM). GPS only runs if you tap for it, and the coordinates stay on the device — there's no reverse geocode and no mapping SDK. Camera and files are the same: asked for when you use them, stored locally.
+
+No analytics, no third-party scripts, no accounts.
+
+A browser can still wipe site data. Private/incognito is gone when the session ends. iOS will sometimes evict unused PWAs. Install it and open it once in a while if you want reports to stick around.
+
+## Run locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). Camera, location, and the service worker need HTTPS in a real install; `localhost` is fine for development.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`npm run build` also runs the storage and media self-checks.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js, Zustand, Zod, Serwist.
