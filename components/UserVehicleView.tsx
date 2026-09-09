@@ -2,7 +2,7 @@
 
 import { useVehicleFormStore } from "@/store/vehicleFormStore";
 import { useVehicleStore } from "@/store/vehicleStore";
-import { useRouter } from "next/navigation";
+import { useNav } from "@/lib/nav";
 import { useState } from "react";
 import { Dialog } from "./Dialog";
 import { VehicleCard } from "./VehicleCard";
@@ -10,7 +10,7 @@ import { VehicleCard } from "./VehicleCard";
 export function UserVehicleView() {
   const { vehicle, deleteVehicle } = useVehicleStore();
   const { resetForm } = useVehicleFormStore();
-  const router = useRouter();
+  const router = useNav();
   const [confirm, setConfirm] = useState(false);
 
   if (!vehicle) {

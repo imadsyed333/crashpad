@@ -2,13 +2,13 @@
 
 import { useCollisionFormStore } from "@/store/collisionFormStore";
 import { useVehicleFormStore } from "@/store/vehicleFormStore";
-import { usePathname, useRouter } from "next/navigation";
+import { useNav, usePath } from "@/lib/nav";
 import { useState } from "react";
 import { Dialog } from "./Dialog";
 
 export function VehicleDraftButton() {
-  const pathname = usePathname();
-  const router = useRouter();
+  const pathname = usePath();
+  const router = useNav();
   const { vehicle } = useVehicleFormStore();
   const { upsertVehicle } = useCollisionFormStore();
   const [open, setOpen] = useState(false);

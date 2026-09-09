@@ -3,17 +3,17 @@
 import { DriverCard, DriverDialog } from "@/components/DriverDialog";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { VehicleFields } from "@/components/VehicleFields";
+import { useNav } from "@/lib/nav";
 import { Vehicle } from "@/lib/types";
 import { validateVehicle } from "@/lib/validators";
 import { useVehicleFormStore } from "@/store/vehicleFormStore";
 import { useVehicleStore } from "@/store/vehicleStore";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function MyVehiclePage() {
+export function VehicleScreen() {
   const { vehicle, updateVehicleField } = useVehicleFormStore();
   const { setVehicle } = useVehicleStore();
-  const router = useRouter();
+  const router = useNav();
   const [errors, setErrors] = useState<Record<string, string[] | undefined>>({});
 
   return (

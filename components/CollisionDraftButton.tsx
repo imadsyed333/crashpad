@@ -2,13 +2,13 @@
 
 import { useCollisionFormStore } from "@/store/collisionFormStore";
 import { useCollisionStore } from "@/store/collisionStore";
-import { usePathname, useRouter } from "next/navigation";
+import { useNav, usePath } from "@/lib/nav";
 import { useState } from "react";
 import { Dialog } from "./Dialog";
 
 export function CollisionDraftButton() {
-  const pathname = usePathname();
-  const router = useRouter();
+  const pathname = usePath();
+  const router = useNav();
   const { collision } = useCollisionFormStore();
   const { upsertCollision } = useCollisionStore();
   const [open, setOpen] = useState(false);

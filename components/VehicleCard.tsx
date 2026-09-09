@@ -3,7 +3,7 @@
 import { DraftVehicle, Vehicle } from "@/lib/types";
 import { useVehicleFormStore } from "@/store/vehicleFormStore";
 import { Pencil, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useNav } from "@/lib/nav";
 
 function isDraft(vehicle: Vehicle | DraftVehicle): vehicle is DraftVehicle {
   return "savePoint" in vehicle;
@@ -23,7 +23,7 @@ export function VehicleCard({
   onDelete?: () => void;
 }) {
   const { setForm, setEdit } = useVehicleFormStore();
-  const router = useRouter();
+  const router = useNav();
 
   return (
     <article className="card">

@@ -3,7 +3,7 @@
 import { Collision, DraftCollision } from "@/lib/types";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
 import { Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useNav } from "@/lib/nav";
 
 function isDraft(collision: Collision | DraftCollision): collision is DraftCollision {
   return "savePoint" in collision;
@@ -17,7 +17,7 @@ export function CollisionCard({
   onDelete?: () => void;
 }) {
   const { setForm } = useCollisionFormStore();
-  const router = useRouter();
+  const router = useNav();
   const date = new Date(collision.date);
   const formattedDate = date.toLocaleDateString([], {
     weekday: "short",

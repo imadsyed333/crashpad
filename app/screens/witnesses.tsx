@@ -3,15 +3,14 @@
 import { CollisionDraftButton } from "@/components/CollisionDraftButton";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { WitnessDialog, WitnessList } from "@/components/WitnessDialog";
+import { useNav, useSearch } from "@/lib/nav";
 import { useWitnessFormStore } from "@/store/witnessFormStore";
 import { Plus } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
 
-function WitnessesForm() {
+export function WitnessesScreen() {
   const { resetForm, setDialogVisible, setEdit } = useWitnessFormStore();
-  const router = useRouter();
-  const isEdit = useSearchParams().get("mode") === "edit";
+  const router = useNav();
+  const isEdit = useSearch().get("mode") === "edit";
 
   const next = () => {
     if (isEdit) router.back();
@@ -55,13 +54,5 @@ function WitnessesForm() {
         <Plus />
       </button>
     </ScreenContainer>
-  );
-}
-
-export default function WitnessesPage() {
-  return (
-    <Suspense>
-      <WitnessesForm />
-    </Suspense>
   );
 }

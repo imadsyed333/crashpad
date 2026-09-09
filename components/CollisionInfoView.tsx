@@ -2,7 +2,7 @@
 
 import { Collision } from "@/lib/types";
 import { Pencil } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useNav } from "@/lib/nav";
 import { MediaGrid } from "./Media";
 import { VehicleCard } from "./VehicleCard";
 import { WitnessCard } from "./WitnessDialog";
@@ -14,7 +14,7 @@ export function CollisionInfoView({
   collision: Collision;
   showActions?: boolean;
 }) {
-  const router = useRouter();
+  const router = useNav();
   const date = new Date(collision.date);
 
   return (

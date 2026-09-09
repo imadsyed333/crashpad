@@ -3,14 +3,13 @@
 import { CollisionDraftButton } from "@/components/CollisionDraftButton";
 import { MediaGrid, MediaOptions } from "@/components/Media";
 import { ScreenContainer } from "@/components/ScreenContainer";
+import { useNav, useSearch } from "@/lib/nav";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
 
-function MediaForm() {
+export function MediaScreen() {
   const { collision } = useCollisionFormStore();
-  const router = useRouter();
-  const isEdit = useSearchParams().get("mode") === "edit";
+  const router = useNav();
+  const isEdit = useSearch().get("mode") === "edit";
 
   const next = () => {
     if (isEdit) router.back();
@@ -44,13 +43,5 @@ function MediaForm() {
         <MediaGrid media={collision.media} showActions />
       </div>
     </ScreenContainer>
-  );
-}
-
-export default function MediaPage() {
-  return (
-    <Suspense>
-      <MediaForm />
-    </Suspense>
   );
 }

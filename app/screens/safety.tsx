@@ -1,10 +1,10 @@
 "use client";
 
 import { ScreenContainer } from "@/components/ScreenContainer";
-import { useRouter } from "next/navigation";
+import { useNav } from "@/lib/nav";
 
-export default function SafetyPage() {
-  const router = useRouter();
+export function SafetyScreen() {
+  const router = useNav();
   return (
     <ScreenContainer
       title="Safety First"

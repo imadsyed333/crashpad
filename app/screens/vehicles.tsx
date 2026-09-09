@@ -3,15 +3,14 @@
 import { CollisionDraftButton } from "@/components/CollisionDraftButton";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { VehicleList } from "@/components/VehicleList";
+import { useNav, useSearch } from "@/lib/nav";
 import { useVehicleFormStore } from "@/store/vehicleFormStore";
 import { Plus } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
 
-function VehiclesForm() {
+export function VehiclesScreen() {
   const { resetForm, setEdit } = useVehicleFormStore();
-  const router = useRouter();
-  const isEdit = useSearchParams().get("mode") === "edit";
+  const router = useNav();
+  const isEdit = useSearch().get("mode") === "edit";
 
   const next = () => {
     if (isEdit) router.back();
@@ -54,13 +53,5 @@ function VehiclesForm() {
         <Plus />
       </button>
     </ScreenContainer>
-  );
-}
-
-export default function VehiclesPage() {
-  return (
-    <Suspense>
-      <VehiclesForm />
-    </Suspense>
   );
 }
