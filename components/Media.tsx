@@ -36,15 +36,23 @@ function MediaThumb({ media, onOpen }: { media: Media; onOpen: () => void }) {
   const url = useObjectUrl(previewId, previewMime);
   const showVideo = media.type === "video" && !hasThumb;
   return (
-    <button type="button" onClick={onOpen} style={{ padding: 0, border: 0, background: "transparent" }}>
+    <button
+      type="button"
+      className="media-thumb-btn"
+      onClick={onOpen}
+      aria-label={media.type === "video" ? "Play video" : "View photo"}
+    >
       {url && showVideo ? (
         <video className="media-thumb" src={url} muted playsInline preload="metadata" />
       ) : url ? (
         <img className="media-thumb" src={url} alt="" />
       ) : (
-        <div className="media-thumb" aria-hidden>
-          {media.type === "video" ? <Play /> : ""}
-        </div>
+        <div className="media-thumb" aria-hidden />
+      )}
+      {media.type === "video" && (
+        <span className="media-play" aria-hidden>
+          <Play fill="currentColor" />
+        </span>
       )}
     </button>
   );
@@ -52,15 +60,16 @@ function MediaThumb({ media, onOpen }: { media: Media; onOpen: () => void }) {
 
 function MediaViewer({ media, onClose }: { media: Media; onClose: () => void }) {
   const url = useObjectUrl(media.uri, fallbackMimeType(media));
+  const keepOpen = (e: { stopPropagation: () => void }) => e.stopPropagation();
   return (
-    <div className="viewer">
-      <button type="button" className="icon-btn" style={{ color: "white" }} onClick={onClose} aria-label="Close">
+    <div className="viewer" onClick={onClose}>
+      <button type="button" className="icon-btn viewer-close" onClick={onClose} aria-label="Close">
         <X />
       </button>
       {url && media.type === "video" ? (
-        <video src={url} controls playsInline />
+        <video src={url} controls playsInline onClick={keepOpen} />
       ) : url ? (
-        <img src={url} alt="" />
+        <img src={url} alt="" onClick={keepOpen} />
       ) : (
         <p className="muted">Loading…</p>
       )}
