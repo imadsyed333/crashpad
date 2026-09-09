@@ -4,13 +4,13 @@ import { CollisionList } from "@/components/CollisionList";
 import { InstallHint } from "@/components/InstallHint";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { UserVehicleView } from "@/components/UserVehicleView";
+import { useNav } from "@/lib/nav";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
 import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
 
-export default function Home() {
+export function HomeScreen() {
   const { resetForm } = useCollisionFormStore();
-  const router = useRouter();
+  const router = useNav();
 
   const addCollision = () => {
     resetForm();

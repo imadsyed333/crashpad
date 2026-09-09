@@ -4,11 +4,11 @@ import { CollisionDraftButton } from "@/components/CollisionDraftButton";
 import { ErrorBox } from "@/components/ErrorBox";
 import { Field, TextAreaField } from "@/components/Field";
 import { ScreenContainer } from "@/components/ScreenContainer";
+import { useNav, useSearch } from "@/lib/nav";
 import { detailsSchema } from "@/lib/schemas";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
 import { MapPin } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import z from "zod";
 
 function toLocalInput(date: Date) {
@@ -17,14 +17,13 @@ function toLocalInput(date: Date) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-function DetailsForm() {
+export function DetailsScreen() {
   const { collision, updateCollisionField } = useCollisionFormStore();
   const { location, description, date } = collision;
   const [errors, setErrors] = useState<Record<string, string[] | undefined>>({});
   const [fetching, setFetching] = useState(false);
-  const router = useRouter();
-  const mode = useSearchParams().get("mode");
-  const isEdit = mode === "edit";
+  const router = useNav();
+  const isEdit = useSearch().get("mode") === "edit";
 
   const save = () => {
     const parse = detailsSchema.safeParse({ location, description });
@@ -130,13 +129,5 @@ function DetailsForm() {
       />
       <ErrorBox errors={errors.date} />
     </ScreenContainer>
-  );
-}
-
-export default function DetailsPage() {
-  return (
-    <Suspense>
-      <DetailsForm />
-    </Suspense>
   );
 }

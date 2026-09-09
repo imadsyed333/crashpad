@@ -4,17 +4,17 @@ import { DriverCard, DriverDialog } from "@/components/DriverDialog";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { VehicleDraftButton } from "@/components/VehicleDraftButton";
 import { VehicleFields } from "@/components/VehicleFields";
+import { useNav } from "@/lib/nav";
 import { Vehicle } from "@/lib/types";
 import { validateVehicle } from "@/lib/validators";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
 import { useVehicleFormStore } from "@/store/vehicleFormStore";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function VehicleFormPage() {
+export function VehicleFormScreen() {
   const { vehicle, updateVehicleField, isEdit } = useVehicleFormStore();
   const { upsertVehicle } = useCollisionFormStore();
-  const router = useRouter();
+  const router = useNav();
   const [errors, setErrors] = useState<Record<string, string[] | undefined>>({});
 
   return (

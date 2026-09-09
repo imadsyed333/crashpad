@@ -3,18 +3,18 @@
 import { CollisionInfoView } from "@/components/CollisionInfoView";
 import { Dialog } from "@/components/Dialog";
 import { ScreenContainer } from "@/components/ScreenContainer";
+import { useNav } from "@/lib/nav";
 import { Collision } from "@/lib/types";
 import { containsDraftVehicles } from "@/lib/validators";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
 import { useCollisionStore } from "@/store/collisionStore";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function ReviewPage() {
+export function ReviewScreen() {
   const { collision, isEdit } = useCollisionFormStore();
   const { upsertCollision } = useCollisionStore();
   const [alert, setAlert] = useState(false);
-  const router = useRouter();
+  const router = useNav();
 
   return (
     <ScreenContainer

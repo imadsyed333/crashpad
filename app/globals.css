@@ -108,7 +108,8 @@ body {
 .shell-body {
   flex: 1;
   min-height: 0;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   overscroll-behavior: contain;
   padding-bottom: 1.25rem;
 }
@@ -258,6 +259,8 @@ body {
   flex-direction: column;
   gap: 0.25rem;
   margin-top: 0.6rem;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .field > span {
@@ -274,7 +277,18 @@ body {
   padding: 0.7rem 0.85rem;
   font: inherit;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   box-sizing: border-box;
+}
+
+.field input[type="datetime-local"] {
+  width: 100%;
+  max-width: 100%;
+}
+
+.field input[type="datetime-local"]::-webkit-datetime-edit {
+  min-width: 0;
 }
 
 .field input:focus,
@@ -361,7 +375,7 @@ body {
 
 .card-head {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.5rem;
 }
 
@@ -436,6 +450,16 @@ body {
   gap: 0.75rem;
 }
 
+.media-thumb-btn {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
 .media-thumb {
   width: 100%;
   aspect-ratio: 1;
@@ -446,6 +470,25 @@ body {
   align-items: center;
   justify-content: center;
   color: var(--onSurfaceVariant);
+}
+
+.media-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: white;
+}
+
+.media-play svg {
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0.4rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.5);
+  box-sizing: content-box;
 }
 
 .grow {
@@ -538,6 +581,7 @@ body {
 
 .location-row .field {
   flex: 1;
+  min-width: 0;
 }
 
 .viewer {
@@ -547,12 +591,29 @@ body {
   z-index: 30;
   display: flex;
   flex-direction: column;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.viewer-close {
+  width: 3.75rem;
+  height: 3.75rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.viewer-close svg {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.viewer-close:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .viewer img,
 .viewer video {
   max-width: 100%;
-  max-height: calc(100dvh - 4rem);
+  max-height: calc(100dvh - 5.5rem);
   margin: auto;
   object-fit: contain;
 }

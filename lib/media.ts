@@ -24,15 +24,27 @@ export {
 async function grabVideoThumbnail(file: File, mimeType: string): Promise<ArrayBuffer | null> {
   const source = file.type.startsWith("video/") ? file : new Blob([file], { type: mimeType });
   const url = URL.createObjectURL(source);
+  const video = document.createElement("video");
+  video.muted = true;
+  video.playsInline = true;
+  video.preload = "metadata";
+  // ponytail: iOS won't decode a detached <video>; opacity:0 (not display:none) + in-DOM
+  video.style.cssText = "position:fixed;opacity:0;pointer-events:none;width:1px;height:1px";
   try {
-    const video = document.createElement("video");
-    video.muted = true;
-    video.playsInline = true;
-    video.preload = "auto";
+    document.body.appendChild(video);
     video.src = url;
+    video.load();
     await new Promise<void>((resolve, reject) => {
-      video.onloadeddata = () => resolve();
-      video.onerror = () => reject(new Error("Could not read video"));
+      // ponytail: 2s metadata ceiling; upgrade: generate thumb after attach
+      const t = setTimeout(() => reject(new Error("timeout")), 2000);
+      video.onloadedmetadata = () => {
+        clearTimeout(t);
+        resolve();
+      };
+      video.onerror = () => {
+        clearTimeout(t);
+        reject(new Error("Could not read video"));
+      };
     });
     const duration = Number.isFinite(video.duration) ? video.duration : 0;
     video.currentTime = duration > 0.1 ? 0.1 : 0;
@@ -54,6 +66,9 @@ async function grabVideoThumbnail(file: File, mimeType: string): Promise<ArrayBu
   } catch {
     return null;
   } finally {
+    video.removeAttribute("src");
+    video.load();
+    video.remove();
     URL.revokeObjectURL(url);
   }
 }

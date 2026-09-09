@@ -1,7 +1,7 @@
 "use client";
 
+import { useNav } from "@/lib/nav";
 import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
 
 export function ScreenContainer({
@@ -19,7 +19,7 @@ export function ScreenContainer({
   children: React.ReactNode;
   footer?: React.ReactNode;
 }) {
-  const router = useRouter();
+  const router = useNav();
 
   const handleBack = () => {
     if (backHref) router.replace(backHref);
