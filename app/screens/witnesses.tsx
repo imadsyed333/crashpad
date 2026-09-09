@@ -4,17 +4,27 @@ import { CollisionDraftButton } from "@/components/CollisionDraftButton";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { WitnessDialog, WitnessList } from "@/components/WitnessDialog";
 import { useNav, useSearch } from "@/lib/nav";
+import { useCollisionFormStore } from "@/store/collisionFormStore";
 import { useWitnessFormStore } from "@/store/witnessFormStore";
 import { Plus } from "lucide-react";
 
 export function WitnessesScreen() {
   const { resetForm, setDialogVisible, setEdit } = useWitnessFormStore();
+  const { isEdit: storeIsEdit, commitEdit } = useCollisionFormStore();
   const router = useNav();
   const isEdit = useSearch().get("mode") === "edit";
 
   const next = () => {
-    if (isEdit) router.back();
-    else router.push("/collisions/form/review");
+    if (isEdit) {
+      if (storeIsEdit) {
+        const id = commitEdit();
+        if (id) router.replace(`/collisions/${id}`);
+      } else {
+        router.back();
+      }
+    } else {
+      router.push("/collisions/form/review");
+    }
   };
 
   return (

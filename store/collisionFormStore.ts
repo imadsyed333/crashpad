@@ -1,10 +1,13 @@
+import { diffMedia, shouldDeleteBlobOnRemove } from "@/lib/collisionEdit";
 import { deleteMediaBlob } from "@/lib/storage";
 import { Collision, Media, Vehicle, Witness } from "@/lib/types";
 import { create } from "zustand";
+import { useCollisionStore } from "./collisionStore";
 import { useVehicleStore } from "./vehicleStore";
 
 interface CollisionFormStore {
   collision: Collision;
+  originalMedia: Media[];
   isEdit: boolean;
   setEdit: (value: boolean) => void;
   updateCollisionField: <K extends keyof Collision>(
@@ -12,6 +15,9 @@ interface CollisionFormStore {
     value: Collision[K],
   ) => void;
   setForm: (collision: Collision) => void;
+  beginEdit: (collision: Collision) => void;
+  commitEdit: () => string | null;
+  discardEdit: () => void;
   upsertVehicle: (vehicle: Vehicle & { savePoint?: string }) => void;
   deleteVehicle: (id: string) => void;
   addWitness: (witness: Witness) => void;
@@ -42,8 +48,16 @@ const newCollision = (): Collision => {
   };
 };
 
+function deleteMediaBlobs(items: Media[]) {
+  for (const media of items) {
+    void deleteMediaBlob(media.uri);
+    if (media.thumbnailUri) void deleteMediaBlob(media.thumbnailUri);
+  }
+}
+
 export const useCollisionFormStore = create<CollisionFormStore>((set, get) => ({
   collision: newCollision(),
+  originalMedia: [],
   isEdit: false,
   setEdit: (value) => set({ isEdit: value }),
   updateCollisionField: (key, value) =>
@@ -51,6 +65,29 @@ export const useCollisionFormStore = create<CollisionFormStore>((set, get) => ({
       collision: { ...state.collision, [key]: value },
     })),
   setForm: (collision) => set({ collision }),
+  beginEdit: (collision) =>
+    set({
+      collision: structuredClone(collision),
+      originalMedia: structuredClone(collision.media),
+      isEdit: true,
+    }),
+  commitEdit: () => {
+    const { collision, isEdit, originalMedia } = get();
+    if (!isEdit) return null;
+    deleteMediaBlobs(diffMedia(originalMedia, collision.media).removed);
+    const { savePoint, ...clean } = collision as Collision & { savePoint?: string };
+    void savePoint;
+    useCollisionStore.getState().upsertCollision(clean as Collision);
+    const id = collision.id;
+    get().resetForm();
+    return id;
+  },
+  discardEdit: () => {
+    const { collision, isEdit, originalMedia } = get();
+    if (!isEdit) return;
+    deleteMediaBlobs(diffMedia(originalMedia, collision.media).added);
+    get().resetForm();
+  },
   deleteVehicle: (id: string) =>
     set((state) => ({
       collision: {
@@ -103,11 +140,10 @@ export const useCollisionFormStore = create<CollisionFormStore>((set, get) => ({
     }));
   },
   deleteMedia: (id: string) => {
-    const media = get().collision.media.find((m) => m.id === id);
-    if (media) {
-      void deleteMediaBlob(media.uri);
-      if (media.thumbnailUri) void deleteMediaBlob(media.thumbnailUri);
-    }
+    const { collision, isEdit, originalMedia } = get();
+    const media = collision.media.find((m) => m.id === id);
+    const original = isEdit ? originalMedia : undefined;
+    if (media && shouldDeleteBlobOnRemove(media.id, original)) deleteMediaBlobs([media]);
     set((state) => ({
       collision: {
         ...state.collision,
@@ -115,5 +151,5 @@ export const useCollisionFormStore = create<CollisionFormStore>((set, get) => ({
       },
     }));
   },
-  resetForm: () => set({ collision: newCollision(), isEdit: false }),
+  resetForm: () => set({ collision: newCollision(), isEdit: false, originalMedia: [] }),
 }));

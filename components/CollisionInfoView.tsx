@@ -10,12 +10,18 @@ import { WitnessCard } from "./WitnessDialog";
 export function CollisionInfoView({
   collision,
   showActions = false,
+  beforeEdit,
 }: {
   collision: Collision;
   showActions?: boolean;
+  beforeEdit?: () => void;
 }) {
   const router = useNav();
   const date = new Date(collision.date);
+  const edit = (href: string) => {
+    beforeEdit?.();
+    router.push(href);
+  };
 
   return (
     <div>
@@ -26,7 +32,7 @@ export function CollisionInfoView({
             type="button"
             className="icon-btn"
             aria-label="Edit details"
-            onClick={() => router.push("/collisions/form/details?mode=edit")}
+            onClick={() => edit("/collisions/form/details?mode=edit")}
           >
             <Pencil />
           </button>
@@ -56,7 +62,7 @@ export function CollisionInfoView({
             type="button"
             className="icon-btn"
             aria-label="Edit media"
-            onClick={() => router.push("/collisions/form/media?mode=edit")}
+            onClick={() => edit("/collisions/form/media?mode=edit")}
           >
             <Pencil />
           </button>
@@ -76,7 +82,7 @@ export function CollisionInfoView({
             type="button"
             className="icon-btn"
             aria-label="Edit vehicles"
-            onClick={() => router.push("/collisions/form/vehicles?mode=edit")}
+            onClick={() => edit("/collisions/form/vehicles?mode=edit")}
           >
             <Pencil />
           </button>
@@ -97,7 +103,7 @@ export function CollisionInfoView({
             type="button"
             className="icon-btn"
             aria-label="Edit witnesses"
-            onClick={() => router.push("/collisions/form/witnesses?mode=edit")}
+            onClick={() => edit("/collisions/form/witnesses?mode=edit")}
           >
             <Pencil />
           </button>

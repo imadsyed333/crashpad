@@ -18,7 +18,8 @@ function toLocalInput(date: Date) {
 }
 
 export function DetailsScreen() {
-  const { collision, updateCollisionField } = useCollisionFormStore();
+  const { collision, updateCollisionField, isEdit: storeIsEdit, commitEdit } =
+    useCollisionFormStore();
   const { location, description, date } = collision;
   const [errors, setErrors] = useState<Record<string, string[] | undefined>>({});
   const [fetching, setFetching] = useState(false);
@@ -31,8 +32,16 @@ export function DetailsScreen() {
       setErrors(z.flattenError(parse.error).fieldErrors);
       return;
     }
-    if (isEdit) router.back();
-    else router.push("/collisions/form/media");
+    if (isEdit) {
+      if (storeIsEdit) {
+        const id = commitEdit();
+        if (id) router.replace(`/collisions/${id}`);
+      } else {
+        router.back();
+      }
+    } else {
+      router.push("/collisions/form/media");
+    }
   };
 
   const fetchLocation = async () => {

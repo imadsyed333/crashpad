@@ -99,6 +99,7 @@ export function MediaOptions() {
       }
       if (attached === 0) {
         setAlert("None of the selected files could be attached.");
+        return;
       }
     } catch {
       setAlert("The selected file could not be attached.");
