@@ -108,7 +108,8 @@ body {
 .shell-body {
   flex: 1;
   min-height: 0;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   overscroll-behavior: contain;
   padding-bottom: 1.25rem;
 }
@@ -258,6 +259,8 @@ body {
   flex-direction: column;
   gap: 0.25rem;
   margin-top: 0.6rem;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .field > span {
@@ -274,7 +277,18 @@ body {
   padding: 0.7rem 0.85rem;
   font: inherit;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   box-sizing: border-box;
+}
+
+.field input[type="datetime-local"] {
+  width: 100%;
+  max-width: 100%;
+}
+
+.field input[type="datetime-local"]::-webkit-datetime-edit {
+  min-width: 0;
 }
 
 .field input:focus,
@@ -538,6 +552,7 @@ body {
 
 .location-row .field {
   flex: 1;
+  min-width: 0;
 }
 
 .viewer {
