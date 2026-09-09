@@ -9,6 +9,7 @@ export function SafetyScreen() {
     <ScreenContainer
       title="Safety First"
       description="Follow these steps before documenting the collision."
+      backHref="/"
       footer={
         <div className="btn-row">
           <button
