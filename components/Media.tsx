@@ -69,7 +69,7 @@ function MediaViewer({ media, onClose }: { media: Media; onClose: () => void }) 
 }
 
 export function MediaOptions() {
-  const { addMedia, addMediaMany } = useCollisionFormStore();
+  const { addMedia } = useCollisionFormStore();
   const [busy, setBusy] = useState(false);
   const [alert, setAlert] = useState<string | null>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
@@ -79,20 +79,18 @@ export function MediaOptions() {
     if (!files?.length) return;
     setBusy(true);
     try {
-      const attached = [];
+      let attached = 0;
       for (const file of Array.from(files)) {
         try {
-          attached.push(await createMediaFromFile(file));
+          addMedia(await createMediaFromFile(file));
+          attached += 1;
         } catch {
           // skip unreadable files
         }
       }
-      if (attached.length === 0) {
+      if (attached === 0) {
         setAlert("None of the selected files could be attached.");
-        return;
       }
-      if (attached.length === 1) addMedia(attached[0]!);
-      else addMediaMany(attached);
     } catch {
       setAlert("The selected file could not be attached.");
     } finally {
