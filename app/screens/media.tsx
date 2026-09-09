@@ -7,13 +7,21 @@ import { useNav, useSearch } from "@/lib/nav";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
 
 export function MediaScreen() {
-  const { collision } = useCollisionFormStore();
+  const { collision, isEdit: storeIsEdit, commitEdit } = useCollisionFormStore();
   const router = useNav();
   const isEdit = useSearch().get("mode") === "edit";
 
   const next = () => {
-    if (isEdit) router.back();
-    else router.push("/collisions/form/vehicles");
+    if (isEdit) {
+      if (storeIsEdit) {
+        const id = commitEdit();
+        if (id) router.replace(`/collisions/${id}`);
+      } else {
+        router.back();
+      }
+    } else {
+      router.push("/collisions/form/vehicles");
+    }
   };
 
   return (
