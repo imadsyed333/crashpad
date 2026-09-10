@@ -7,7 +7,7 @@ assert.equal(
     distance_m: 150,
     direction: "NE",
   }),
-  "150 m NE of Jane and Finch",
+  "150m NE of Jane and Finch",
 );
 
 assert.equal(
@@ -16,7 +16,7 @@ assert.equal(
     distance_m: 150.7,
     direction: "NE",
   }),
-  "151 m NE of Jane and Finch",
+  "151m NE of Jane and Finch",
 );
 
 assert.equal(
