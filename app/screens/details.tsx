@@ -101,27 +101,30 @@ export function DetailsScreen() {
         )
       }
     >
-      <div className="location-row">
-        <Field
-          label={'Where are you? (Ex. "near Jane and Finch")'}
-          value={location.description}
-          error={errors.location}
-          onChange={(e) => {
-            updateCollisionField("location", { ...location, description: e.target.value });
-            setErrors({ ...errors, location: undefined });
-          }}
-        />
-        <button
-          type="button"
-          className="icon-btn"
-          onClick={() => void fetchLocation()}
-          aria-label={fetching ? "Fetching current location" : "Use current location"}
-          aria-busy={fetching}
-          disabled={fetching}
-        >
-          {fetching ? <Loader2 className="animate-spin" /> : <MapPin />}
-        </button>
-      </div>
+      <Field
+        label={'Where are you? (Ex. "near Jane and Finch")'}
+        error={errors.location}
+      >
+        <div className="location-row">
+          <input
+            value={location.description}
+            onChange={(e) => {
+              updateCollisionField("location", { ...location, description: e.target.value });
+              setErrors({ ...errors, location: undefined });
+            }}
+          />
+          <button
+            type="button"
+            className="icon-btn"
+            onClick={() => void fetchLocation()}
+            aria-label={fetching ? "Fetching current location" : "Use current location"}
+            aria-busy={fetching}
+            disabled={fetching}
+          >
+            {fetching ? <Loader2 className="animate-spin" /> : <MapPin />}
+          </button>
+        </div>
+      </Field>
       {location.coordinates && (
         <p className="muted">
           GPS {location.coordinates.latitude.toFixed(5)}, {location.coordinates.longitude.toFixed(5)}
