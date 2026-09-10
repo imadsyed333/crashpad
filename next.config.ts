@@ -13,7 +13,7 @@ const csp = [
   "img-src 'self' blob: data:",
   "media-src 'self' blob:",
   "font-src 'self'",
-  "connect-src 'self'",
+  "connect-src 'self' https://crashpad-locate.vercel.app",
   "worker-src 'self'",
   "object-src 'none'",
   "base-uri 'none'",

@@ -5,14 +5,15 @@
   "scripts": {
     "dev": "concurrently -p none \"serwist build serwist.config.mjs --watch\" \"next dev\"",
     "dev:once": "serwist build serwist.config.mjs && next dev",
-    "build": "next build && serwist build serwist.config.mjs && npm run check:storage && npm run check:media && npm run check:nav && npm run check:pdf && npm run check:collision-edit",
+    "build": "next build && serwist build serwist.config.mjs && npm run check:storage && npm run check:media && npm run check:nav && npm run check:pdf && npm run check:collision-edit && npm run check:locate",
     "start": "next start",
     "lint": "eslint",
     "check:storage": "node scripts/storage-check.mjs",
     "check:media": "node --experimental-strip-types scripts/media-check.mjs",
     "check:nav": "node --experimental-strip-types scripts/nav-check.mjs",
     "check:pdf": "node --experimental-strip-types scripts/pdf-check.mjs",
-    "check:collision-edit": "node --experimental-strip-types scripts/collision-edit-check.mjs"
+    "check:collision-edit": "node --experimental-strip-types scripts/collision-edit-check.mjs",
+    "check:locate": "node --experimental-strip-types scripts/locate-check.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.41.0",

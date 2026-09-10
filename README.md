@@ -8,7 +8,7 @@ Save your own car once so new reports start with that filled in. You can leave a
 
 ## Privacy
 
-Everything lives in this origin's IndexedDB (AES-GCM). GPS only runs if you tap for it, and the coordinates stay on the device — there's no reverse geocode and no mapping SDK. Camera and files are the same: asked for when you use them, stored locally.
+Everything lives in this origin's IndexedDB (AES-GCM). GPS only runs if you tap for it. If you're online, those coordinates are sent to crashpad-locate to fill a nearby-place description; if that request fails, only the coordinates are kept on the device. There is no mapping SDK. Camera and files are the same: asked for when you use them, stored locally.
 
 No analytics, no third-party scripts, no accounts.
 

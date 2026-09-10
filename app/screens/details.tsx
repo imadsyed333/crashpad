@@ -4,6 +4,7 @@ import { CollisionDraftButton } from "@/components/CollisionDraftButton";
 import { ErrorBox } from "@/components/ErrorBox";
 import { Field, TextAreaField } from "@/components/Field";
 import { ScreenContainer } from "@/components/ScreenContainer";
+import { locateNearby } from "@/lib/locate";
 import { useNav, useSearch } from "@/lib/nav";
 import { detailsSchema } from "@/lib/schemas";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
@@ -53,16 +54,20 @@ export function DetailsScreen() {
     setFetching(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        // ponytail: GPS coords only — no reverse geocode so coordinates never leave the device.
-        // Upgrade: user-chosen first-party geocoder after an explicit opt-in.
-        updateCollisionField("location", {
-          ...location,
-          coordinates: {
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-          },
-        });
-        setFetching(false);
+        void (async () => {
+          try {
+            const { latitude, longitude } = pos.coords;
+            const current = useCollisionFormStore.getState().collision.location;
+            const text = await locateNearby(latitude, longitude);
+            updateCollisionField("location", {
+              ...current,
+              coordinates: { latitude, longitude },
+              ...(text != null ? { description: text } : {}),
+            });
+          } finally {
+            setFetching(false);
+          }
+        })();
       },
       (err) => {
         setFetching(false);
