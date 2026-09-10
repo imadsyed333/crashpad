@@ -561,7 +561,8 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .splash-logo {
+  .splash-logo,
+  .animate-spin {
     animation: none;
   }
 }
@@ -575,13 +576,14 @@ body {
 
 .location-row {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 0.25rem;
 }
 
-.location-row .field {
+.location-row input {
   flex: 1;
   min-width: 0;
+  width: auto;
 }
 
 .viewer {

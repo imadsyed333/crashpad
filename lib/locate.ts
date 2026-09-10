@@ -13,7 +13,7 @@ export type LocateResult = z.infer<typeof locateResultSchema>;
 
 export function formatLocateDescription(result: LocateResult): string {
   if (result.direction == null) return result.name;
-  return `${Math.round(result.distance_m)} m ${result.direction} of ${result.name}`;
+  return `${Math.round(result.distance_m)}m ${result.direction} of ${result.name}`;
 }
 
 export async function locateNearby(lat: number, lon: number): Promise<string | null> {
