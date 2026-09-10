@@ -561,7 +561,8 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .splash-logo {
+  .splash-logo,
+  .animate-spin {
     animation: none;
   }
 }

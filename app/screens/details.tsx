@@ -8,7 +8,7 @@ import { locateNearby } from "@/lib/locate";
 import { useNav, useSearch } from "@/lib/nav";
 import { detailsSchema } from "@/lib/schemas";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
-import { MapPin } from "lucide-react";
+import { Loader2, MapPin } from "lucide-react";
 import { useState } from "react";
 import z from "zod";
 
@@ -116,9 +116,10 @@ export function DetailsScreen() {
           className="icon-btn"
           onClick={() => void fetchLocation()}
           aria-label={fetching ? "Fetching current location" : "Use current location"}
+          aria-busy={fetching}
           disabled={fetching}
         >
-          <MapPin />
+          {fetching ? <Loader2 className="animate-spin" /> : <MapPin />}
         </button>
       </div>
       {location.coordinates && (
