@@ -612,9 +612,10 @@ body {
 
 .viewer img,
 .viewer video {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
   max-width: 100%;
-  max-height: calc(100dvh - 5.5rem);
-  margin: auto;
   object-fit: contain;
 }
 

@@ -1,6 +1,7 @@
 import z from "zod";
 
-export const LOCATE_URL = "https://crashpad-locate.vercel.app/nearest";
+export const LOCATE_REMOTE_URL = "https://crashpad-locate.vercel.app/nearest";
+const LOCATE_PROXY_URL = "/api/locate";
 
 export const locateResultSchema = z.object({
   name: z.string(),
@@ -18,7 +19,7 @@ export function formatLocateDescription(result: LocateResult): string {
 export async function locateNearby(lat: number, lon: number): Promise<string | null> {
   if (!navigator.onLine) return null;
   try {
-    const res = await fetch(LOCATE_URL, {
+    const res = await fetch(LOCATE_PROXY_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ lat, lon }),
