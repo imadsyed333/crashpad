@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently -p none \"serwist build serwist.config.mjs --watch\" \"next dev\"",
-    "dev:once": "serwist build serwist.config.mjs && next dev",
-    "build": "next build && serwist build serwist.config.mjs && npm run check:storage && npm run check:media && npm run check:nav && npm run check:pdf && npm run check:collision-edit && npm run check:locate",
+    "dev": "node scripts/vendor-ocr.mjs && concurrently -p none \"serwist build serwist.config.mjs --watch\" \"next dev\"",
+    "dev:once": "node scripts/vendor-ocr.mjs && serwist build serwist.config.mjs && next dev",
+    "build": "node scripts/vendor-ocr.mjs && next build && serwist build serwist.config.mjs && npm run check:storage && npm run check:media && npm run check:nav && npm run check:pdf && npm run check:collision-edit && npm run check:locate && npm run check:ocr",
     "start": "next start",
     "lint": "eslint",
     "check:storage": "node scripts/storage-check.mjs",
@@ -13,13 +13,15 @@
     "check:nav": "node --experimental-strip-types scripts/nav-check.mjs",
     "check:pdf": "node --experimental-strip-types scripts/pdf-check.mjs",
     "check:collision-edit": "node --experimental-strip-types scripts/collision-edit-check.mjs",
-    "check:locate": "node --experimental-strip-types scripts/locate-check.mjs"
+    "check:locate": "node --experimental-strip-types scripts/locate-check.mjs",
+    "check:ocr": "node scripts/ocr-check.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.41.0",
     "next": "16.3.4",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "tesseract.js": "^7.0.0",
     "validator": "^13.15.35",
     "zod": "^4.5.4",
     "zustand": "^5.0.15"

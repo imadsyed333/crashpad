@@ -1,11 +1,14 @@
 "use client";
 
+import { readLicense, terminateLicenseWorker } from "@/lib/licenseOcr";
 import { LICENSE_MASK, PHONE_MASK } from "@/lib/mask";
 import { driverSchema } from "@/lib/schemas";
 import { Driver } from "@/lib/types";
 import { useVehicleFormStore } from "@/store/vehicleFormStore";
-import { useState } from "react";
+import { Camera, Images } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import z from "zod";
+import { ErrorBox } from "./ErrorBox";
 import { Field } from "./Field";
 import { MaskedInput } from "./MaskedInput";
 
@@ -61,16 +64,92 @@ function DriverDialogForm() {
   const { setDialogVisible, vehicle, updateVehicleField } = useVehicleFormStore();
   const [driver, setDriver] = useState<Driver>(vehicle.driver ?? emptyDriver());
   const [errors, setErrors] = useState<Record<string, string[] | undefined>>({});
+  const [scanError, setScanError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const cameraRef = useRef<HTMLInputElement>(null);
+  const libraryRef = useRef<HTMLInputElement>(null);
+  const alive = useRef(true);
+
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+      void terminateLicenseWorker();
+    };
+  }, []);
 
   const close = () => {
     setDialogVisible(false);
     setErrors({});
   };
 
+  const onPhoto = async (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) return;
+    setBusy(true);
+    setScanError(null);
+    try {
+      const result = await readLicense(file);
+      if (!alive.current) return;
+      if (!result.ok) {
+        setScanError(result.error);
+        return;
+      }
+      setDriver((current) => ({ ...current, ...result.fields }));
+    } finally {
+      if (cameraRef.current) cameraRef.current.value = "";
+      if (libraryRef.current) libraryRef.current.value = "";
+      if (alive.current) setBusy(false);
+    }
+  };
+
   return (
     <div className="dialog-backdrop" role="dialog" aria-modal="true">
       <div className="dialog">
         <h2>Driver Information</h2>
+        <input
+          ref={cameraRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          hidden
+          onChange={(e) => void onPhoto(e.target.files)}
+        />
+        <input
+          ref={libraryRef}
+          type="file"
+          accept="image/*"
+          hidden
+          onChange={(e) => void onPhoto(e.target.files)}
+        />
+        <div className="btn-row" style={{ marginTop: 0 }}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={busy}
+            aria-label="Open camera"
+            onClick={() => cameraRef.current?.click()}
+          >
+            <Camera />
+            Camera
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={busy}
+            aria-label="Open photo library"
+            onClick={() => libraryRef.current?.click()}
+          >
+            <Images />
+            Library
+          </button>
+        </div>
+        {busy && (
+          <p className="muted" role="status">
+            Reading licence…
+          </p>
+        )}
+        <ErrorBox errors={scanError ? [scanError] : undefined} />
         <Field
           label="Name"
           placeholder="e.g. John Doe"
@@ -109,6 +188,7 @@ function DriverDialogForm() {
           <button
             type="button"
             className="btn btn-primary"
+            disabled={busy}
             onClick={() => {
               const parse = driverSchema.safeParse(driver);
               if (!parse.success) {
