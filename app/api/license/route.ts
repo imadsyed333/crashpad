@@ -11,7 +11,7 @@ function fail() {
 }
 
 async function pollExtract(jobId: string, key: string, signal: AbortSignal): Promise<unknown> {
-  for (;;) {
+  for (; ;) {
     const res = await fetch(`${LLAMA_CLOUD}/api/v2/extract/${jobId}`, {
       headers: { Authorization: `Bearer ${key}` },
       signal,
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         file_input: fileId.data.id,
         configuration: {
-          tier: "cost_effective",
+          tier: "agentic",
           extraction_target: "per_doc",
           data_schema: LICENSE_DATA_SCHEMA,
           system_prompt:
