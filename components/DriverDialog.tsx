@@ -1,11 +1,14 @@
 "use client";
 
+import { scanLicense } from "@/lib/license";
 import { LICENSE_MASK, PHONE_MASK } from "@/lib/mask";
 import { driverSchema } from "@/lib/schemas";
 import { Driver } from "@/lib/types";
 import { useVehicleFormStore } from "@/store/vehicleFormStore";
-import { useState } from "react";
+import { Camera } from "lucide-react";
+import { useRef, useState } from "react";
 import z from "zod";
+import { ErrorBox } from "./ErrorBox";
 import { Field } from "./Field";
 import { MaskedInput } from "./MaskedInput";
 
@@ -61,16 +64,59 @@ function DriverDialogForm() {
   const { setDialogVisible, vehicle, updateVehicleField } = useVehicleFormStore();
   const [driver, setDriver] = useState<Driver>(vehicle.driver ?? emptyDriver());
   const [errors, setErrors] = useState<Record<string, string[] | undefined>>({});
+  const [busy, setBusy] = useState(false);
+  const [scanError, setScanError] = useState<string[] | undefined>();
+  const cameraRef = useRef<HTMLInputElement>(null);
 
   const close = () => {
     setDialogVisible(false);
     setErrors({});
   };
 
+  const onPhoto = async (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) return;
+    setBusy(true);
+    setScanError(undefined);
+    try {
+      const next = await scanLicense(file);
+      if (!next) {
+        setScanError(["Could not read the license. Your entries were left as they are."]);
+        return;
+      }
+      setDriver(next);
+      setErrors({});
+    } finally {
+      setBusy(false);
+      if (cameraRef.current) cameraRef.current.value = "";
+    }
+  };
+
   return (
     <div className="dialog-backdrop" role="dialog" aria-modal="true">
       <div className="dialog">
         <h2>Driver Information</h2>
+        <input
+          ref={cameraRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          hidden
+          onChange={(e) => void onPhoto(e.target.files)}
+        />
+        <div className="btn-row" style={{ marginTop: 0 }}>
+          <button
+            type="button"
+            className="btn btn-outline"
+            disabled={busy}
+            aria-label="Scan license"
+            onClick={() => cameraRef.current?.click()}
+          >
+            <Camera />
+            Scan license
+          </button>
+        </div>
+        <ErrorBox errors={scanError} />
         <Field
           label="Name"
           placeholder="e.g. John Doe"

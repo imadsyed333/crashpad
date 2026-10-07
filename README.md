@@ -14,7 +14,7 @@ NOTE: Currently, CrashPad is intended to be used in Ontario, Canada, with revers
 
 ## Privacy
 
-Everything lives in the device's IndexedDB (AES-GCM). GPS only runs if you tap for it. If you're online, those coordinates are sent to [crashpad-locate](https://github.com/imadsyed333/crashpad-locate) to fetch the nearest street intersection; if that request fails, only the coordinates are kept on the device. There is no mapping SDK. Camera and files are the same: asked for when you use them, stored locally.
+Everything lives in the device's IndexedDB (AES-GCM). GPS only runs if you tap for it. If you're online, those coordinates are sent to [crashpad-locate](https://github.com/imadsyed333/crashpad-locate) to fetch the nearest street intersection; if that request fails, only the coordinates are kept on the device. There is no mapping SDK. Camera and files are the same: asked for when you use them, stored locally. Scanning a license sends that photo to LlamaIndex to fill the driver form, and the photo is not saved in the app. The rest of collision data stays on the device.
 
 No analytics, no third-party scripts, no accounts.
 
