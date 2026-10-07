@@ -4,7 +4,8 @@ import { LICENSE_MASK, PHONE_MASK } from "@/lib/mask";
 import { driverSchema } from "@/lib/schemas";
 import { Driver } from "@/lib/types";
 import { useVehicleFormStore } from "@/store/vehicleFormStore";
-import { useState } from "react";
+import { Camera } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import z from "zod";
 import { Field } from "./Field";
 import { MaskedInput } from "./MaskedInput";
@@ -61,16 +62,78 @@ function DriverDialogForm() {
   const { setDialogVisible, vehicle, updateVehicleField } = useVehicleFormStore();
   const [driver, setDriver] = useState<Driver>(vehicle.driver ?? emptyDriver());
   const [errors, setErrors] = useState<Record<string, string[] | undefined>>({});
+  const [scanning, setScanning] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
+  const busy = useRef(false);
+
+  useEffect(() => {
+    const input = cameraRef.current;
+    if (!input) return;
+    const onCancel = () => setScanError("Could not read that licence.");
+    input.addEventListener("cancel", onCancel);
+    return () => input.removeEventListener("cancel", onCancel);
+  }, []);
 
   const close = () => {
     setDialogVisible(false);
     setErrors({});
   };
 
+  const readPhoto = async (files: FileList | null) => {
+    const file = files?.[0];
+    if (cameraRef.current) cameraRef.current.value = "";
+    if (!file) {
+      setScanError("Could not read that licence.");
+      return;
+    }
+    if (busy.current) return;
+    busy.current = true;
+    setScanning(true);
+    setScanError(null);
+    try {
+      const { scanDriverLicense } = await import("@/lib/scanLicense");
+      const result = await scanDriverLicense(file);
+      if (!result.ok) {
+        setScanError("Could not read that licence.");
+        return;
+      }
+      setDriver((current) => ({ ...current, ...result.fields }));
+    } catch {
+      setScanError("Could not read that licence.");
+    } finally {
+      busy.current = false;
+      setScanning(false);
+    }
+  };
+
   return (
     <div className="dialog-backdrop" role="dialog" aria-modal="true">
       <div className="dialog">
         <h2>Driver Information</h2>
+        <input
+          ref={cameraRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          hidden
+          onChange={(e) => void readPhoto(e.target.files)}
+        />
+        <button
+          type="button"
+          className="btn btn-outline"
+          style={{ width: "100%" }}
+          disabled={scanning}
+          onClick={() => cameraRef.current?.click()}
+        >
+          <Camera />
+          {scanning ? "Reading licence…" : "Scan licence"}
+        </button>
+        {scanError && (
+          <p className="errors" role="alert">
+            {scanError}
+          </p>
+        )}
         <Field
           label="Name"
           placeholder="e.g. John Doe"
