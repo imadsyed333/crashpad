@@ -413,6 +413,43 @@ body {
   font-size: 1.2rem;
 }
 
+.scan-view {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.scan-view .btn {
+  width: 100%;
+}
+
+.scan-stage {
+  position: relative;
+}
+
+.scan-video {
+  display: block;
+  width: 100%;
+  max-height: 50dvh;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #000;
+}
+
+.scan-prompt {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0 0 12px 12px;
+  background: rgb(0 0 0 / 0.65);
+  color: #fff;
+  font-size: 0.95rem;
+}
+
 .step {
   display: flex;
   gap: 0.75rem;
