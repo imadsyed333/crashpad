@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Serwist
 public/sw*
+
+# Copied on dev/build by scripts/vendor-ocr.mjs
+/public/ocr/
