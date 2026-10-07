@@ -1,6 +1,7 @@
 "use client";
 
 import { AamvaDriver, parseAamva } from "@/lib/aamva";
+import { openPdf417Detector, type OpenedPdf417Detector } from "@/lib/barcode";
 import { LICENSE_MASK, PHONE_MASK } from "@/lib/mask";
 import { driverSchema } from "@/lib/schemas";
 import { Driver } from "@/lib/types";
@@ -14,28 +15,24 @@ import { MaskedInput } from "./MaskedInput";
 const UNSUPPORTED = "This browser can't scan a licence barcode. Enter the details by hand.";
 const DENIED = "Camera permission is needed to scan a licence.";
 
-type DetectedBarcode = { rawValue: string };
-
-type BarcodeDetectorCtor = {
-  new (options?: { formats?: string[] }): {
-    detect: (source: HTMLVideoElement) => Promise<DetectedBarcode[]>;
-  };
-  getSupportedFormats: () => Promise<string[]>;
+type ScanSession = {
+  camera: Promise<MediaStream>;
+  detector: Promise<OpenedPdf417Detector>;
 };
 
-function barcodeDetector(): BarcodeDetectorCtor | undefined {
-  return (window as Window & { BarcodeDetector?: BarcodeDetectorCtor }).BarcodeDetector;
-}
+type ScanResult = AamvaDriver | "denied" | "unsupported" | "cancel";
 
-async function canScanPdf417(): Promise<boolean> {
-  const Detector = barcodeDetector();
-  if (!Detector) return false;
-  try {
-    const formats = await Detector.getSupportedFormats();
-    return formats.includes("pdf417");
-  } catch {
-    return false;
-  }
+// ponytail: WASM PDF417 at full phone resolution misses the 200ms interval and
+// runs hot. Cap the longest side at 1280. Upgrade: adaptive scale if detect()
+// regularly exceeds the interval.
+function drawWasmFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+  const longest = Math.max(video.videoWidth, video.videoHeight);
+  const scale = longest > 1280 ? 1280 / longest : 1;
+  const width = Math.round(video.videoWidth * scale);
+  const height = Math.round(video.videoHeight * scale);
+  if (canvas.width !== width) canvas.width = width;
+  if (canvas.height !== height) canvas.height = height;
+  ctx.drawImage(video, 0, 0, width, height);
 }
 
 const emptyDriver = (): Driver => ({
@@ -86,30 +83,73 @@ export function DriverDialog() {
   return <DriverDialogForm />;
 }
 
-function LicenceScanView({ onDone }: { onDone: (result: AamvaDriver | "denied" | "cancel") => void }) {
+function LicenceScanView({
+  camera,
+  detector,
+  onDone,
+}: {
+  camera: Promise<MediaStream>;
+  detector: Promise<OpenedPdf417Detector>;
+  onDone: (result: ScanResult) => void;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const video = videoRef.current;
-    const Detector = barcodeDetector();
-    if (!video || !Detector || !navigator.mediaDevices?.getUserMedia) {
+    if (!video) {
       onDone("denied");
       return;
     }
 
     let stream: MediaStream | null = null;
+    let picked: OpenedPdf417Detector | null = null;
     let timer = 0;
     let stopped = false;
     let pending = false;
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
     const stop = () => {
       if (stopped) return;
       stopped = true;
       window.clearInterval(timer);
       stream?.getTracks().forEach((track) => track.stop());
     };
+    const fail = (reason: "denied" | "unsupported") => {
+      if (stopped) return;
+      stop();
+      onDone(reason);
+    };
+    const startLoop = () => {
+      if (stopped || timer || !stream || !picked) return;
+      if (picked.kind === "wasm" && !ctx) {
+        fail("unsupported");
+        return;
+      }
+      const ready = picked;
+      timer = window.setInterval(() => {
+        if (stopped || pending || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
+        pending = true;
+        if (ready.kind === "wasm" && ctx) drawWasmFrame(video, canvas, ctx);
+        ready.detector
+          .detect(ready.kind === "wasm" && ctx ? canvas : video)
+          .then((codes) => {
+            if (stopped) return;
+            for (const code of codes) {
+              const parsed = parseAamva(code.rawValue);
+              if (!parsed) continue;
+              stop();
+              onDone(parsed);
+              return;
+            }
+          })
+          .catch(() => {})
+          .finally(() => {
+            pending = false;
+          });
+      }, 200);
+    };
 
-    navigator.mediaDevices
-      .getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false })
+    camera
       .then(async (next) => {
         if (stopped) {
           next.getTracks().forEach((track) => track.stop());
@@ -120,38 +160,23 @@ function LicenceScanView({ onDone }: { onDone: (result: AamvaDriver | "denied" |
         try {
           await video.play();
         } catch {
-          if (!stopped) onDone("denied");
+          fail("denied");
           return;
         }
-        if (stopped) return;
-        const detector = new Detector({ formats: ["pdf417"] });
-        timer = window.setInterval(() => {
-          if (stopped || pending || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
-          pending = true;
-          detector
-            .detect(video)
-            .then((codes) => {
-              if (stopped) return;
-              for (const code of codes) {
-                const parsed = parseAamva(code.rawValue);
-                if (!parsed) continue;
-                stop();
-                onDone(parsed);
-                return;
-              }
-            })
-            .catch(() => {})
-            .finally(() => {
-              pending = false;
-            });
-        }, 200);
+        startLoop();
       })
-      .catch(() => {
-        if (!stopped) onDone("denied");
-      });
+      .catch(() => fail("denied"));
+
+    detector
+      .then((next) => {
+        if (stopped) return;
+        picked = next;
+        startLoop();
+      })
+      .catch(() => fail("unsupported"));
 
     return stop;
-  }, [onDone]);
+  }, [camera, detector, onDone]);
 
   return (
     <div className="scan-view">
@@ -172,23 +197,23 @@ function DriverDialogForm() {
   const { setDialogVisible, vehicle, updateVehicleField } = useVehicleFormStore();
   const [driver, setDriver] = useState<Driver>(vehicle.driver ?? emptyDriver());
   const [errors, setErrors] = useState<Record<string, string[] | undefined>>({});
-  const [scanning, setScanning] = useState(false);
+  const [session, setSession] = useState<ScanSession | null>(null);
   const [scanError, setScanError] = useState<string | null>(null);
-  const mounted = useRef(true);
-  useEffect(() => () => {
-    mounted.current = false;
-  }, []);
 
   const close = () => {
     setDialogVisible(false);
     setErrors({});
   };
 
-  const onScanDone = useCallback((result: AamvaDriver | "denied" | "cancel") => {
-    setScanning(false);
+  const onScanDone = useCallback((result: ScanResult) => {
+    setSession(null);
     if (result === "cancel") return;
     if (result === "denied") {
       setScanError(DENIED);
+      return;
+    }
+    if (result === "unsupported") {
+      setScanError(UNSUPPORTED);
       return;
     }
     setScanError(null);
@@ -205,8 +230,8 @@ function DriverDialogForm() {
     <div className="dialog-backdrop" role="dialog" aria-modal="true">
       <div className="dialog">
         <h2>Driver Information</h2>
-        {scanning ? (
-          <LicenceScanView onDone={onScanDone} />
+        {session ? (
+          <LicenceScanView camera={session.camera} detector={session.detector} onDone={onScanDone} />
         ) : (
           <>
             <button
@@ -215,10 +240,16 @@ function DriverDialogForm() {
               style={{ width: "100%", marginBottom: "0.75rem" }}
               onClick={() => {
                 setScanError(null);
-                void canScanPdf417().then((ok) => {
-                  if (!mounted.current) return;
-                  if (ok) setScanning(true);
-                  else setScanError(UNSUPPORTED);
+                if (!navigator.mediaDevices?.getUserMedia) {
+                  setScanError(DENIED);
+                  return;
+                }
+                setSession({
+                  camera: navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { ideal: "environment" } },
+                    audio: false,
+                  }),
+                  detector: openPdf417Detector(),
                 });
               }}
             >
