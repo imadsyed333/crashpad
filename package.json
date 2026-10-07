@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently -p none \"serwist build serwist.config.mjs --watch\" \"next dev\"",
-    "dev:once": "serwist build serwist.config.mjs && next dev",
-    "build": "next build && serwist build serwist.config.mjs && npm run check:storage && npm run check:media && npm run check:nav && npm run check:pdf && npm run check:collision-edit && npm run check:locate",
+    "copy:zxing": "node scripts/copy-zxing-wasm.mjs",
+    "dev": "npm run copy:zxing && concurrently -p none \"serwist build serwist.config.mjs --watch\" \"next dev\"",
+    "dev:once": "npm run copy:zxing && serwist build serwist.config.mjs && next dev",
+    "build": "npm run copy:zxing && next build && serwist build serwist.config.mjs && npm run check:storage && npm run check:media && npm run check:nav && npm run check:pdf && npm run check:collision-edit && npm run check:locate && npm run check:aamva && npm run check:barcode",
     "start": "next start",
     "lint": "eslint",
     "check:storage": "node scripts/storage-check.mjs",
@@ -13,9 +14,12 @@
     "check:nav": "node --experimental-strip-types scripts/nav-check.mjs",
     "check:pdf": "node --experimental-strip-types scripts/pdf-check.mjs",
     "check:collision-edit": "node --experimental-strip-types scripts/collision-edit-check.mjs",
-    "check:locate": "node --experimental-strip-types scripts/locate-check.mjs"
+    "check:locate": "node --experimental-strip-types scripts/locate-check.mjs",
+    "check:aamva": "node --experimental-strip-types scripts/aamva-check.mjs",
+    "check:barcode": "node --experimental-strip-types scripts/barcode-check.mjs"
   },
   "dependencies": {
+    "barcode-detector": "^3.2.2",
     "lucide-react": "^1.41.0",
     "next": "16.3.4",
     "react": "19.2.8",
