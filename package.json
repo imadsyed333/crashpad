@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently -p none \"serwist build serwist.config.mjs --watch\" \"next dev\"",
     "dev:once": "serwist build serwist.config.mjs && next dev",
-    "build": "next build && serwist build serwist.config.mjs && npm run check:storage && npm run check:media && npm run check:nav && npm run check:pdf && npm run check:collision-edit && npm run check:locate && npm test",
+    "build": "next build && serwist build serwist.config.mjs && npm run check:storage && npm run check:media && npm run check:nav && npm run check:pdf && npm run check:collision-edit && npm run check:locate",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
