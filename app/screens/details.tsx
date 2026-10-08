@@ -107,10 +107,7 @@ export function DetailsScreen() {
         )
       }
     >
-      <Field
-        label={'Where are you? (Ex. "near Jane and Finch")'}
-        error={errors.location}
-      >
+      <Field label="Where are you?" hint='Ex. "near Jane and Finch"' error={errors.location}>
         <div className="location-row">
           <input
             value={location.description}
@@ -147,7 +144,8 @@ export function DetailsScreen() {
         </p>
       )}
       <TextAreaField
-        label="What happened? (Ex. 'A car ran a red light and hit me')"
+        label="What happened?"
+        hint="Ex. A car ran a red light and hit me"
         value={description}
         error={errors.description}
         onChange={(e) => {

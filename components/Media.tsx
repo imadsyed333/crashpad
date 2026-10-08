@@ -161,15 +161,7 @@ export function MediaGrid({ media, showActions = false }: { media: Media[]; show
   const [open, setOpen] = useState<Media | null>(null);
   const [pending, setPending] = useState<string | null>(null);
 
-  if (media.length === 0) {
-    return (
-      <div className="card empty">
-        <h3>No media added</h3>
-        <p>No photos or videos have been attached to this collision yet.</p>
-        <p className="hint">Use Camera or Library to add photos or videos</p>
-      </div>
-    );
-  }
+  if (media.length === 0) return null;
 
   return (
     <>

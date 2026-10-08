@@ -7,7 +7,7 @@ import { useWitnessFormStore } from "@/store/witnessFormStore";
 import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import z from "zod";
-import { Dialog } from "./Dialog";
+import { Dialog, useDialogDismiss } from "./Dialog";
 import { Field } from "./Field";
 import { MaskedInput } from "./MaskedInput";
 
@@ -133,16 +133,16 @@ export function WitnessDialog() {
   } = useWitnessFormStore();
   const { addWitness, updateWitness } = useCollisionFormStore();
   const [errors, setErrors] = useState<Record<string, string[] | undefined>>({});
-
-  if (!isDialogVisible) return null;
-
   const close = () => {
     setDialogVisible(false);
     setErrors({});
   };
+  const panelRef = useDialogDismiss(isDialogVisible, close);
+
+  if (!isDialogVisible) return null;
 
   return (
-    <div className="dialog-backdrop" role="dialog" aria-modal="true">
+    <div ref={panelRef} tabIndex={-1} className="dialog-backdrop" role="dialog" aria-modal="true">
       <div className="dialog">
         <h2>Witness Information</h2>
         <Field

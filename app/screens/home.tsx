@@ -18,7 +18,6 @@ export function HomeScreen() {
 
   return (
     <ScreenContainer title="CrashPad" backButton={false}>
-      <InstallHint />
       <button type="button" className="btn btn-primary home-start" onClick={addCollision}>
         Record a collision
       </button>
@@ -27,6 +26,7 @@ export function HomeScreen() {
       <div className="divider" />
       <h2 className="section-title">My Collisions</h2>
       <CollisionList />
+      <InstallHint />
     </ScreenContainer>
   );
 }

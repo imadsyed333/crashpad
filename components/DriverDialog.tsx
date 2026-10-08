@@ -6,6 +6,7 @@ import { Driver } from "@/lib/types";
 import { useVehicleFormStore } from "@/store/vehicleFormStore";
 import { useState } from "react";
 import z from "zod";
+import { useDialogDismiss } from "./Dialog";
 import { Field } from "./Field";
 import { MaskedInput } from "./MaskedInput";
 
@@ -66,9 +67,10 @@ function DriverDialogForm() {
     setDialogVisible(false);
     setErrors({});
   };
+  const panelRef = useDialogDismiss(true, close);
 
   return (
-    <div className="dialog-backdrop" role="dialog" aria-modal="true">
+    <div ref={panelRef} tabIndex={-1} className="dialog-backdrop" role="dialog" aria-modal="true">
       <div className="dialog">
         <h2>Driver Information</h2>
         <Field

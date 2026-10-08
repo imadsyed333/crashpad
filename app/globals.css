@@ -273,6 +273,30 @@ a.link {
   margin-bottom: 0.75rem;
 }
 
+.collision-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 0;
+}
+
+.collision-card-open {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 1rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.collision-card > .icon-btn {
+  margin: 0.65rem 0.35rem 0 0;
+}
+
 .empty {
   text-align: center;
   padding: 1.5rem 1rem;
@@ -310,6 +334,11 @@ a.link {
 .field > span {
   font-size: 0.8rem;
   color: var(--onSurfaceVariant);
+}
+
+.field > .field-hint {
+  font-size: 0.75rem;
+  font-style: italic;
 }
 
 .field input,
@@ -412,6 +441,10 @@ a.link {
   justify-content: center;
   padding: 1rem;
   z-index: 20;
+}
+
+.dialog-backdrop:focus {
+  outline: none;
 }
 
 .dialog {

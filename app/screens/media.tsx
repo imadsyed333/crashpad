@@ -47,9 +47,11 @@ export function MediaScreen() {
       }
     >
       <MediaOptions />
-      <div style={{ marginTop: "0.75rem" }}>
-        <MediaGrid media={collision.media} showActions />
-      </div>
+      {collision.media.length > 0 && (
+        <div style={{ marginTop: "0.75rem" }}>
+          <MediaGrid media={collision.media} showActions />
+        </div>
+      )}
     </ScreenContainer>
   );
 }

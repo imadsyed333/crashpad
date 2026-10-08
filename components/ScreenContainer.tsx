@@ -52,7 +52,7 @@ export function ScreenContainer({
           )}
           {description && <p className="desc">{description}</p>}
         </div>
-        <ThemeToggle />
+        {!backButton && <ThemeToggle />}
       </header>
       <div className="shell-body">{children}</div>
       {footer ? <footer className="shell-footer">{footer}</footer> : null}
