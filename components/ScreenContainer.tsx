@@ -1,6 +1,7 @@
 "use client";
 
-import { useNav } from "@/lib/nav";
+import { useNav, usePath } from "@/lib/nav";
+import { reportStep } from "@/lib/screens";
 import { ArrowLeft } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -20,6 +21,7 @@ export function ScreenContainer({
   footer?: React.ReactNode;
 }) {
   const router = useNav();
+  const step = reportStep(usePath());
 
   const handleBack = () => {
     if (backHref) router.replace(backHref);
@@ -36,6 +38,18 @@ export function ScreenContainer({
         )}
         <div className="header-text">
           <h1>{title}</h1>
+          {step && (
+            <p className="report-step">
+              {step.label}
+              <span aria-hidden="true"> · </span>
+              {step.index + 1} of {step.total}
+              <span className="step-track" aria-hidden="true">
+                {Array.from({ length: step.total }, (_, i) => (
+                  <span key={i} className={i <= step.index ? "on" : undefined} />
+                ))}
+              </span>
+            </p>
+          )}
           {description && <p className="desc">{description}</p>}
         </div>
         <ThemeToggle />

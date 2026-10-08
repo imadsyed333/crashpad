@@ -9,6 +9,7 @@ import { Media } from "@/lib/types";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
 import { Camera, Images, Play, Trash2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { Dialog } from "./Dialog";
 
 function useObjectUrl(id?: string, mimeType?: string) {
   const [url, setUrl] = useState<string | null>(null);
@@ -158,6 +159,7 @@ export function MediaOptions() {
 export function MediaGrid({ media, showActions = false }: { media: Media[]; showActions?: boolean }) {
   const { deleteMedia } = useCollisionFormStore();
   const [open, setOpen] = useState<Media | null>(null);
+  const [pending, setPending] = useState<string | null>(null);
 
   if (media.length === 0) {
     return (
@@ -181,7 +183,7 @@ export function MediaGrid({ media, showActions = false }: { media: Media[]; show
                 className="icon-btn danger"
                 aria-label="Delete media"
                 style={{ position: "absolute", top: 4, right: 4, background: "var(--surface)" }}
-                onClick={() => deleteMedia(item.id)}
+                onClick={() => setPending(item.id)}
               >
                 <Trash2 />
               </button>
@@ -190,6 +192,17 @@ export function MediaGrid({ media, showActions = false }: { media: Media[]; show
         ))}
       </div>
       {open && <MediaViewer media={open} onClose={() => setOpen(null)} />}
+      <Dialog
+        title="Delete Media"
+        message="Are you sure you want to delete this photo or video?"
+        open={pending !== null}
+        onSuccess={() => {
+          if (pending) deleteMedia(pending);
+          setPending(null);
+          setOpen(null);
+        }}
+        onCancel={() => setPending(null)}
+      />
     </>
   );
 }

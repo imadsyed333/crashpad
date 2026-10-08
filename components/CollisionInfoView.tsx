@@ -1,5 +1,6 @@
 "use client";
 
+import { mapsUrl } from "@/lib/locate";
 import { Collision } from "@/lib/types";
 import { Pencil } from "lucide-react";
 import { useNav } from "@/lib/nav";
@@ -42,14 +43,31 @@ export function CollisionInfoView({
       <div className="card">
         <p><span className="bold">Location: </span>{collision.location.description}</p>
         <p><span className="bold">Description: </span>{collision.description}</p>
-        <p><span className="bold">Date: </span>{date.toDateString()}</p>
         <p>
-          <span className="bold">Time: </span>
-          {date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+          <span className="bold">Date: </span>
+          {date.toLocaleString("en-US", {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+          })}
         </p>
         {collision.location.coordinates && (
           <p className="muted">
-            GPS {collision.location.coordinates.latitude.toFixed(5)},{" "}
+            <a
+              className="link"
+              href={mapsUrl(
+                collision.location.coordinates.latitude,
+                collision.location.coordinates.longitude,
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open in Maps
+            </a>
+            {" · "}
+            {collision.location.coordinates.latitude.toFixed(5)},{" "}
             {collision.location.coordinates.longitude.toFixed(5)}
           </p>
         )}
@@ -93,7 +111,7 @@ export function CollisionInfoView({
         <p className="muted" style={{ fontStyle: "italic" }}>No vehicles added.</p>
       )}
       {collision.vehicles.map((vehicle, index) => (
-        <VehicleCard key={vehicle.id} vehicle={vehicle} index={index} />
+        <VehicleCard key={vehicle.id} vehicle={vehicle} index={index} summary />
       ))}
 
       <div className="card-head">
@@ -114,7 +132,7 @@ export function CollisionInfoView({
         <p className="muted" style={{ fontStyle: "italic" }}>No witnesses added.</p>
       )}
       {collision.witnesses.map((witness, index) => (
-        <WitnessCard key={witness.id} witness={witness} index={index} />
+        <WitnessCard key={witness.id} witness={witness} index={index} summary />
       ))}
     </div>
   );

@@ -4,7 +4,7 @@ import { CollisionDraftButton } from "@/components/CollisionDraftButton";
 import { ErrorBox } from "@/components/ErrorBox";
 import { Field, TextAreaField } from "@/components/Field";
 import { ScreenContainer } from "@/components/ScreenContainer";
-import { locateNearby } from "@/lib/locate";
+import { locateNearby, mapsUrl } from "@/lib/locate";
 import { useNav, useSearch } from "@/lib/nav";
 import { detailsSchema } from "@/lib/schemas";
 import { useCollisionFormStore } from "@/store/collisionFormStore";
@@ -23,6 +23,7 @@ export function DetailsScreen() {
     useCollisionFormStore();
   const { location, description, date } = collision;
   const [errors, setErrors] = useState<Record<string, string[] | undefined>>({});
+  const [locationError, setLocationError] = useState<string | null>(null);
   const [fetching, setFetching] = useState(false);
   const router = useNav();
   const isEdit = useSearch().get("mode") === "edit";
@@ -47,8 +48,9 @@ export function DetailsScreen() {
 
   const fetchLocation = async () => {
     if (fetching) return;
+    setLocationError(null);
     if (!navigator.geolocation) {
-      window.alert("Permission required\nPermission to access location is required.");
+      setLocationError("Location is not available on this device.");
       return;
     }
     setFetching(true);
@@ -72,7 +74,11 @@ export function DetailsScreen() {
       (err) => {
         setFetching(false);
         if (err.code === err.PERMISSION_DENIED) {
-          window.alert("Permission required\nPermission to access location is required.");
+          setLocationError("Permission to access location is required.");
+        } else if (err.code === err.TIMEOUT) {
+          setLocationError("Finding your location timed out.");
+        } else {
+          setLocationError("Could not find your location.");
         }
       },
       { enableHighAccuracy: true, timeout: 15000 },
@@ -125,9 +131,19 @@ export function DetailsScreen() {
           </button>
         </div>
       </Field>
+      {locationError ? <ErrorBox errors={[locationError]} /> : null}
       {location.coordinates && (
         <p className="muted">
-          GPS {location.coordinates.latitude.toFixed(5)}, {location.coordinates.longitude.toFixed(5)}
+          <a
+            className="link"
+            href={mapsUrl(location.coordinates.latitude, location.coordinates.longitude)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open in Maps
+          </a>
+          {" · "}
+          {location.coordinates.latitude.toFixed(5)}, {location.coordinates.longitude.toFixed(5)}
         </p>
       )}
       <TextAreaField

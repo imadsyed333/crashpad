@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { screenFromPath } from "../lib/screens.ts";
+import { reportStep, screenFromPath } from "../lib/screens.ts";
 
 assert.equal(screenFromPath("/"), "home");
 assert.equal(screenFromPath(""), "home");
@@ -16,3 +16,21 @@ assert.equal(screenFromPath("/collisions/a1b2c3d4-e5f6"), "collision");
 assert.equal(screenFromPath("/collisions/form"), "notFound");
 assert.equal(screenFromPath("/collisions/form/unknown"), "notFound");
 assert.equal(screenFromPath("/nope"), "notFound");
+
+assert.deepEqual(reportStep("/collisions/form/safety"), {
+  index: 0,
+  total: 6,
+  label: "Safety",
+});
+assert.deepEqual(reportStep("/collisions/form/witnesses/"), {
+  index: 4,
+  total: 6,
+  label: "Witnesses",
+});
+assert.deepEqual(reportStep("/collisions/form/review"), {
+  index: 5,
+  total: 6,
+  label: "Review",
+});
+assert.equal(reportStep("/collisions/form/vehicle"), null);
+assert.equal(reportStep("/"), null);

@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { formatLocateDescription, locateResultSchema } from "../lib/locate.ts";
+import { formatLocateDescription, locateResultSchema, mapsUrl } from "../lib/locate.ts";
+
+assert.equal(mapsUrl(43.7612, -79.411), "https://www.google.com/maps?q=43.7612,-79.411");
 
 assert.equal(
   formatLocateDescription({

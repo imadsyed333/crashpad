@@ -20,7 +20,7 @@ export function UserVehicleView() {
         <p>Save your vehicle information to quickly fill collision reports</p>
         <button
           type="button"
-          className="btn btn-primary"
+          className="btn btn-outline"
           style={{ marginTop: "0.75rem" }}
           onClick={() => {
             resetForm();

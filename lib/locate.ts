@@ -11,6 +11,10 @@ export const locateResultSchema = z.object({
 
 export type LocateResult = z.infer<typeof locateResultSchema>;
 
+export function mapsUrl(latitude: number, longitude: number) {
+  return `https://www.google.com/maps?q=${latitude},${longitude}`;
+}
+
 export function formatLocateDescription(result: LocateResult): string {
   if (result.direction == null) return result.name;
   return `${Math.round(result.distance_m)}m ${result.direction} of ${result.name}`;

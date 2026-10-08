@@ -15,14 +15,25 @@ export function WitnessCard({
   witness,
   index,
   showActions,
+  summary = false,
   onDelete,
 }: {
   witness: { id: string; name: string; phoneNumber: string; address: string };
   index: number;
   showActions?: boolean;
+  summary?: boolean;
   onDelete?: () => void;
 }) {
   const { setForm, setEdit, setDialogVisible } = useWitnessFormStore();
+  if (summary) {
+    return (
+      <article className="card">
+        <h3 style={{ margin: 0 }}>{witness.name}</h3>
+        <p>{witness.phoneNumber}</p>
+        {witness.address ? <p className="muted">{witness.address}</p> : null}
+      </article>
+    );
+  }
   return (
     <article className="card">
       <div className="card-head">

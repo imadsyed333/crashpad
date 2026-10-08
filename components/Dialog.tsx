@@ -24,11 +24,11 @@ export function Dialog({
         <div className="btn-row">
           {!isInfo && (
             <button type="button" className="btn btn-outline" onClick={onCancel}>
-              No
+              Cancel
             </button>
           )}
           <button type="button" className="btn btn-primary" onClick={onSuccess}>
-            {isInfo ? "Ok" : "Yes"}
+            {isInfo ? "Ok" : "Delete"}
           </button>
         </div>
       </div>

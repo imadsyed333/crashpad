@@ -143,6 +143,45 @@ body {
   font-size: 0.95rem;
 }
 
+.report-step {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0.3rem 0 0;
+  color: var(--onSurfaceVariant);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.step-track {
+  display: flex;
+  gap: 0.18rem;
+  width: 4.75rem;
+  flex-shrink: 0;
+}
+
+.step-track span {
+  height: 0.28rem;
+  flex: 1;
+  border-radius: 999px;
+  background: var(--outlineVariant);
+}
+
+.step-track span.on {
+  background: var(--primary);
+}
+
+.home-start {
+  width: 100%;
+  margin: 0 0 1rem;
+}
+
+a.link {
+  color: var(--primary);
+  font-weight: 600;
+}
+
 .icon-btn {
   border: 0;
   background: transparent;
