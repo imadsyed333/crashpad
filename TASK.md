@@ -28,8 +28,6 @@ The app is a phone-first crash report: home, then a six-step form ([safety](app/
 
 **10. Shorten the splash.** [AppShell](components/AppShell.tsx) holds the splash for at least 2 seconds even when storage is already open. Show it only while storage is loading.
 
-**11. Safety should offer a real call.** The red card in [safety.tsx](app/screens/safety.tsx) says “Call 911” as text. Make that a `tel:911` button. Leave the checklist as guidance.
-
 ## Smaller polish
 
 - **Form labels.** Details labels include the example (`Where are you? (Ex. "near Jane and Finch")`). Use a short label and put the example in placeholder or helper text in [Field](components/Field.tsx).

@@ -6,8 +6,6 @@ import { useThemeStore } from "@/store/themeStore";
 import { useVehicleStore } from "@/store/vehicleStore";
 import { useEffect, useState } from "react";
 
-const SPLASH_MS = 2000;
-
 function SplashMark() {
   return (
     <img
@@ -31,21 +29,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
-    let timer: ReturnType<typeof setTimeout> | undefined;
     (async () => {
-      const started = Date.now();
       try {
         await initializeSecureStorage();
         await useCollisionStore.persist.rehydrate();
         await useThemeStore.persist.rehydrate();
         await useVehicleStore.persist.rehydrate();
         const persisted = await isStorageDurable();
-        const remaining = Math.max(0, SPLASH_MS - (Date.now() - started));
-        if (remaining) {
-          await new Promise<void>((resolve) => {
-            timer = setTimeout(resolve, remaining);
-          });
-        }
         if (!cancelled) {
           setDurable(persisted);
           setStatus("ready");
@@ -57,7 +47,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     })();
     return () => {
       cancelled = true;
-      if (timer) clearTimeout(timer);
     };
   }, []);
 

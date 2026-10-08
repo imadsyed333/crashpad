@@ -1,5 +1,19 @@
-import type { InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
+"use client";
+
+import { focusFieldError } from "@/lib/focusField";
+import { useEffect, useRef, type InputHTMLAttributes, type ReactNode, type TextareaHTMLAttributes } from "react";
 import { ErrorBox } from "./ErrorBox";
+
+function useFocusWhenInvalid(error?: string[]) {
+  const ref = useRef<HTMLLabelElement>(null);
+  useEffect(() => {
+    const field = ref.current;
+    if (!error?.length || !field) return;
+    if (field !== document.querySelector(".field.error")) return;
+    focusFieldError(document);
+  }, [error]);
+  return ref;
+}
 
 type FieldProps = {
   label: string;
@@ -13,8 +27,9 @@ export function Field({
   children,
   ...props
 }: FieldProps & InputHTMLAttributes<HTMLInputElement>) {
+  const ref = useFocusWhenInvalid(error);
   return (
-    <label className={`field${error?.length ? " error" : ""}`}>
+    <label ref={ref} className={`field${error?.length ? " error" : ""}`}>
       <span>{label}</span>
       {children ?? <input {...props} />}
       <ErrorBox errors={error} />
@@ -27,8 +42,9 @@ export function TextAreaField({
   error,
   ...props
 }: FieldProps & TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  const ref = useFocusWhenInvalid(error);
   return (
-    <label className={`field${error?.length ? " error" : ""}`}>
+    <label ref={ref} className={`field${error?.length ? " error" : ""}`}>
       <span>{label}</span>
       <textarea rows={4} {...props} />
       <ErrorBox errors={error} />
