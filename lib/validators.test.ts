@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Collision, Driver, Vehicle, Witness } from "./types";
+import { Collision, DraftVehicle, Driver, Vehicle, Witness } from "./types";
 import {
   containsDraftVehicles,
   validateDriver,
@@ -102,10 +102,10 @@ describe("validateWitness", () => {
 describe("containsDraftVehicles", () => {
   it("is true only when a vehicle has a savePoint", () => {
     expect(containsDraftVehicles(collisionWith([filledVehicle()]))).toBe(false);
-    expect(
-      containsDraftVehicles(
-        collisionWith([{ ...filledVehicle(), savePoint: "/collisions/form/vehicle" }]),
-      ),
-    ).toBe(true);
+    const draft: DraftVehicle = {
+      ...filledVehicle(),
+      savePoint: "/collisions/form/vehicle",
+    };
+    expect(containsDraftVehicles(collisionWith([draft]))).toBe(true);
   });
 });

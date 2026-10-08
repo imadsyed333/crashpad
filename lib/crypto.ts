@@ -45,7 +45,7 @@ export async function unwrapDataKey(
 export async function encryptBytes(
   key: CryptoKey,
   plaintext: BufferSource,
-): Promise<Uint8Array> {
+): Promise<Uint8Array<ArrayBuffer>> {
   const iv = globalThis.crypto.getRandomValues(new Uint8Array(IV_LENGTH));
   const cipher = await getSubtle().encrypt({ name: "AES-GCM", iv }, key, plaintext);
   const packed = new Uint8Array(iv.length + cipher.byteLength);
@@ -57,7 +57,7 @@ export async function encryptBytes(
 export async function decryptBytes(
   key: CryptoKey,
   packed: BufferSource,
-): Promise<Uint8Array> {
+): Promise<Uint8Array<ArrayBuffer>> {
   const bytes = packed instanceof ArrayBuffer
     ? new Uint8Array(packed)
     : new Uint8Array(packed.buffer, packed.byteOffset, packed.byteLength);
@@ -67,7 +67,7 @@ export async function decryptBytes(
   return new Uint8Array(plain);
 }
 
-export async function encryptText(key: CryptoKey, text: string): Promise<Uint8Array> {
+export async function encryptText(key: CryptoKey, text: string): Promise<Uint8Array<ArrayBuffer>> {
   return encryptBytes(key, new TextEncoder().encode(text));
 }
 
@@ -84,7 +84,7 @@ export function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
-export function base64ToBytes(value: string): Uint8Array {
+export function base64ToBytes(value: string): Uint8Array<ArrayBuffer> {
   const binary = atob(value);
   const bytes = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
